@@ -2,21 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
-class UserController extends Controller
+class PermissionController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return inertia('users/index', [
-            'users' => User::with('roles')->whereNot('email', 'admin')->get(),
-        ]);
+        return inertia(
+            'permissions/index',
+            [
+                'roles' => Role::with('permissions')->get()
+            ]
+
+        );
     }
 
     /**
@@ -24,8 +27,8 @@ class UserController extends Controller
      */
     public function create()
     {
-        return inertia('users/create', [
-            'roles' => Role::get(),
+        return inertia('permissions/create', [
+            'permissions' => Permission::get(),
         ]);
     }
 
@@ -35,16 +38,15 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|unique:users,name',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|same:confirm_password',
-            'roles' => 'required'
+            'name' => 'required|unique:roles,name',
+            'permissions' => 'required',
         ]);
-        $input = $request->all();
-        $input['password'] = Hash::make($input['password']);
-        $user = User::create($input);
-        $user->assignRole($request->input('roles'));
-        return redirect()->route('users.index')->with('success', 'User created successfully');
+
+        $role = Role::create(['name' => $request->input('name')]);
+
+        $role->syncPermissions($request->input('permissions'));
+
+        return redirect()->route('permissions.index')->with('success', 'Role created successfully');
     }
 
     /**

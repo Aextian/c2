@@ -19,6 +19,11 @@ const mainNavItems: NavItem[] = [
         icon: Users,
     },
     {
+        title: 'Roles and Permissions',
+        url: route('permissions.index'),
+        icon: Users,
+    },
+    {
         title: 'Task',
         url: route('tasks.index'),
         icon: LucideThermometerSnowflake,

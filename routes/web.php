@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\OpenAIController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -15,10 +16,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
 
-    Route::post('/openai/generate-subtasks', OpenAIController::class);
+    Route::post('/openai/generate-subtasks', OpenAIController::class); // Route for generating sub-tasks
 
     Route::resource('users', UserController::class);
     Route::resource('tasks', TaskController::class);
+    Route::resource('permissions', PermissionController::class);
 });
 
 require __DIR__ . '/settings.php';
