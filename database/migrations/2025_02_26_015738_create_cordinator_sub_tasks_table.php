@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
-            $table->unsignedBigInteger('coordinator_task_id');
-            $table->foreign('coordinator_task_id')->references('id')->on('cordinator_tasks');
-            $table->enum('status', ['todo', 'doing', 'done', 'cancelled'])->default('pending');
+            $table->unsignedBigInteger('sub_task_id');
+            $table->foreign('sub_task_id')->references('id')->on('sub_tasks');
+            $table->enum('status', ['todo', 'doing', 'done', 'cancelled'])->default('todo');
             $table->timestamps();
         });
     }

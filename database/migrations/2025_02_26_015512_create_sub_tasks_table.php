@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('task_id');
             $table->foreign('task_id')->references('id')->on('tasks');
-            $table->string('description');
+            $table->string('content');
             $table->integer('percentage')->nullable();
             $table->timestamps();
         });

@@ -15,7 +15,7 @@ const index = () => {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="users" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-                <Link href={route('users.create')} className="bg-primary self-end rounded-md px-4 py-2 text-black">
+                <Link href={route('users.create')} className="bg-primary self-end rounded-md px-4 py-2 text-white">
                     Create User
                 </Link>
                 <UsersTable />

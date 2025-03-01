@@ -4,6 +4,7 @@ use App\Http\Controllers\OpenAIController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UsersTaskController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -21,6 +22,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('tasks', TaskController::class);
     Route::resource('permissions', PermissionController::class);
+
+    // cordinator tasks
+    Route::prefix('users-tasks')->group(function () {
+        Route::get('/', [UsersTaskController::class, 'index'])->name('users-tasks.index');
+    });
 });
 
 require __DIR__ . '/settings.php';

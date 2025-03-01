@@ -17,8 +17,9 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users');
             $table->string('title');
             $table->string('content');
-            $table->enum('type', ['todo', 'doing', 'done', 'cancelled'])->default('todo');
             $table->date('dead_line')->nullable();
+            $table->enum('type', ['minor', 'important', 'urgent'])->default('minor');
+            $table->enum('status', ['todo', 'doing', 'done', 'cancelled'])->default('todo');
             $table->integer('percentage')->nullable();
             $table->timestamps();
         });

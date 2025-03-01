@@ -2,7 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TaskRequest;
+use App\Models\CordinatorSubTask;
+use App\Models\CordinatorTask;
+use App\Models\SubTask;
+use App\Models\Task;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class TaskController extends Controller
 {
@@ -11,7 +19,9 @@ class TaskController extends Controller
      */
     public function index()
     {
-        return inertia('tasks/index');
+        return inertia('tasks/index', [
+            'users' => User::get(),
+        ]);
     }
 
     /**
@@ -27,7 +37,57 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            DB::transaction(function () use ($request) {
+
+                $userId = Auth::id();
+                $options = $request->input('options');
+                $cordinatorSubTasks = [];
+                $cordinatorTask = [];
+
+                $task =  Task::create([
+                    'user_id'   => $userId,
+                    'title' => $request->input('title'),
+                    'content' => $request->input('content'),
+                    'type' => $request->input('type'),
+                    'dead_line' => $request->input('deadLine'),
+                ]);
+
+                foreach ($options as $option) {
+
+                    $subTask = SubTask::create([
+                        'task_id' => $task->id,
+                        'content' => $option['subTask']
+                    ]);
+
+                    foreach ($option['userIds'] as $userId) {
+                        $cordinatorTask[] = [
+                            'user_id' => $userId,
+                            'task_id' => $task->id
+                        ];
+                        $cordinatorSubTasks[] = [
+                            'sub_task_id' => $subTask->id,
+                            'user_id' => $userId,
+                            'created_at' => now(),
+                            'updated_at' => now()
+                        ];
+                    }
+                }
+
+                // Bulk insert all coordinator tasks at once
+                if (!empty($cordinatorTask)) {
+                    CordinatorTask::insert($cordinatorTask);
+                }
+
+                if (!empty($cordinatorSubTasks)) {
+                    CordinatorSubTask::insert($cordinatorSubTasks);
+                }
+                return redirect()->route('tasks.index')->with('success', 'Task created successfully');
+            });
+        } catch (\Throwable $th) {
+            // throw $th;
+            return redirect()->route('tasks.index')->with('error', 'Something went wrong');
+        }
     }
 
     /**

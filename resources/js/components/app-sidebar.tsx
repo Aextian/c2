@@ -28,6 +28,11 @@ const mainNavItems: NavItem[] = [
         url: route('tasks.index'),
         icon: LucideThermometerSnowflake,
     },
+    {
+        title: 'Task Assign',
+        url: route('users-tasks.index'),
+        icon: LucideThermometerSnowflake,
+    },
 ];
 
 const footerNavItems: NavItem[] = [
