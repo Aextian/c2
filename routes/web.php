@@ -26,6 +26,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // cordinator tasks
     Route::prefix('users-tasks')->group(function () {
         Route::get('/', [UsersTaskController::class, 'index'])->name('users-tasks.index');
+        Route::post('/comment', [UsersTaskController::class, 'storeComment'])->name('users-tasks.comment');
     });
 });
 

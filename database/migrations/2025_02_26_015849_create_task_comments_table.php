@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
-            $table->unsignedBigInteger('task_id');
-            $table->foreign('task_id')->references('id')->on('tasks');
-            $table->text('comment');
-            $table->string('file');
+            $table->unsignedBigInteger('sub_task_id');
+            $table->foreign('sub_task_id')->references('id')->on('sub_tasks');
+            $table->string('comment');
+            $table->string('file_path')->nullable();
             $table->timestamps();
         });
     }

@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { SelectContent, SelectGroup, SelectItem, SelectLabel, Select as SelectPrimitive, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { useAppearance } from '@/hooks/use-appearance';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { IUser } from '@/types/users-types';
@@ -37,6 +38,9 @@ const Index = ({ users }: IProps) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const selectRef = useRef<any>(null);
     const [isGenerating, setGenerating] = useState(false);
+    const { appearance } = useAppearance(); // Get current theme from ShadCN UI
+
+    const isDark = appearance === 'dark'; // Check if dark mode is enabled
 
     const { post, setData, data, errors, processing, clearErrors, reset } = useForm<ITaskForm>({
         title: '',
@@ -196,6 +200,36 @@ const Index = ({ users }: IProps) => {
                                                     ),
                                                 }))
                                             }
+                                            styles={{
+                                                control: (base, state) => ({
+                                                    ...base,
+                                                    backgroundColor: isDark ? '#1E293B' : 'white', // Tailwind dark:bg-gray-800
+                                                    borderColor: state.isFocused ? (isDark ? '#475569' : '#CBD5E1') : isDark ? '#334155' : '#E2E8F0',
+                                                    color: isDark ? 'white' : 'black',
+                                                }),
+                                                menu: (base) => ({
+                                                    ...base,
+                                                    backgroundColor: isDark ? '#1E293B' : 'white', // Dark: bg-slate-800
+                                                    color: isDark ? 'white' : 'black',
+                                                }),
+                                                option: (base, { isFocused, isSelected }) => ({
+                                                    ...base,
+                                                    backgroundColor: isSelected
+                                                        ? isDark
+                                                            ? '#334155'
+                                                            : '#E2E8F0'
+                                                        : isFocused
+                                                          ? isDark
+                                                              ? '#475569'
+                                                              : '#CBD5E1'
+                                                          : 'transparent',
+                                                    color: isDark ? 'white' : 'black',
+                                                }),
+                                                singleValue: (base) => ({
+                                                    ...base,
+                                                    color: isDark ? 'white' : 'black',
+                                                }),
+                                            }}
                                             options={usersOptions}
                                             placeholder="Select Employee"
                                         />
