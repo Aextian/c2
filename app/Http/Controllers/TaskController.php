@@ -20,7 +20,7 @@ class TaskController extends Controller
     public function index()
     {
         return inertia('tasks/index', [
-            'users' => User::get(),
+            'tasks' => Task::with('cordinatorTasks.user')->get(),
         ]);
     }
 
@@ -29,7 +29,9 @@ class TaskController extends Controller
      */
     public function create()
     {
-        //
+        return inertia('tasks/create', [
+            'users' => User::get(),
+        ]);
     }
 
     /**
@@ -43,7 +45,6 @@ class TaskController extends Controller
                 $userId = Auth::id();
                 $options = $request->input('options');
                 $cordinatorSubTasks = [];
-                $cordinatorTask = [];
 
                 $task =  Task::create([
                     'user_id'   => $userId,
@@ -51,6 +52,11 @@ class TaskController extends Controller
                     'content' => $request->input('content'),
                     'type' => $request->input('type'),
                     'dead_line' => $request->input('deadLine'),
+                ]);
+
+                CordinatorTask::create([
+                    'user_id' => $userId,
+                    'task_id' => $task->id
                 ]);
 
                 foreach ($options as $option) {
@@ -61,10 +67,6 @@ class TaskController extends Controller
                     ]);
 
                     foreach ($option['userIds'] as $userId) {
-                        $cordinatorTask[] = [
-                            'user_id' => $userId,
-                            'task_id' => $task->id
-                        ];
                         $cordinatorSubTasks[] = [
                             'sub_task_id' => $subTask->id,
                             'user_id' => $userId,
@@ -72,11 +74,6 @@ class TaskController extends Controller
                             'updated_at' => now()
                         ];
                     }
-                }
-
-                // Bulk insert all coordinator tasks at once
-                if (!empty($cordinatorTask)) {
-                    CordinatorTask::insert($cordinatorTask);
                 }
 
                 if (!empty($cordinatorSubTasks)) {
@@ -95,7 +92,17 @@ class TaskController extends Controller
      */
     public function show(string $id)
     {
-        //
+        return inertia('tasks/show', [
+            'id' => $id
+        ]);
+    }
+
+    public function getTask(string $id)
+    {
+
+        $task = Task::with('subTasks.comments.user', 'subTasks.task')->find($id);
+
+        return response()->json($task);
     }
 
     /**

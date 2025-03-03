@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import UsersTable from '@/components/UsersTable';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
@@ -15,9 +16,11 @@ const index = () => {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="users" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-                <Link href={route('users.create')} className="bg-primary self-end rounded-md px-4 py-2 text-white">
+                <Button className='self-end' variant="outline" asChild>
+                <Link href={route('users.create')} >
                     Create User
                 </Link>
+                </Button>
                 <UsersTable />
             </div>
         </AppLayout>

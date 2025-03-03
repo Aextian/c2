@@ -21,6 +21,18 @@ class UsersTaskController extends Controller
         ]);
     }
 
+    public function getCordinatorTasks()
+    {
+        $userId = Auth::id();
+
+        $cordinator_tasks = CordinatorSubTask::query()
+            ->where('user_id', $userId)
+            ->with('subTask.task', 'subTask.comments.user')
+            ->get();
+
+        return response()->json($cordinator_tasks);
+    }
+
     public function storeComment(Request $request)
     {
         $request->validate([

@@ -9,6 +9,8 @@ export interface ITask {
     type: string;
     status: string;
     percentage?: number;
+    sub_tasks?: ISubTask[];
+    cordinator_tasks?: ICordinatorTask[];
 }
 export interface ISubTask {
     id?: number;
@@ -17,6 +19,7 @@ export interface ISubTask {
     percentage?: number;
     task?: ITask;
     comments?: IComment;
+    cordinator_task?: ICordinatorTask;
 }
 
 export interface ICordinatorTask {
@@ -25,6 +28,7 @@ export interface ICordinatorTask {
     sub_task_id?: number;
     status: string;
     sub_task: ISubTask;
+    user?: IUser;
 }
 
 export interface IComment {

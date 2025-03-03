@@ -27,7 +27,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('users-tasks')->group(function () {
         Route::get('/', [UsersTaskController::class, 'index'])->name('users-tasks.index');
         Route::post('/comment', [UsersTaskController::class, 'storeComment'])->name('users-tasks.comment');
+        Route::get('/cordinator-tasks', [UsersTaskController::class, 'getCordinatorTasks'])->name('users-tasks.cordinator-tasks');
     });
+
+    // tasks
+    Route::get('/get-task/{id}', [TaskController::class, 'getTask'])->name('get-task');
 });
 
 require __DIR__ . '/settings.php';
