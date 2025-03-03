@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\CordinatorSubTask;
+use App\Models\CordinatorTask;
+use App\Models\SubTask;
 use App\Models\TaskComment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use PhpParser\Node\Stmt\TryCatch;
 
 class UsersTaskController extends Controller
 {
@@ -19,6 +22,27 @@ class UsersTaskController extends Controller
                 ->with('subTask.task', 'subTask.comments.user')
                 ->get()
         ]);
+    }
+
+    public function show(string $id)
+    {
+        return inertia('users-tasks/show', [
+            'id' => $id
+        ]);
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required',
+        ]);
+        try {
+            CordinatorSubTask::find($id)->update(['status' => $request->status]);
+
+            return response()->json(['message' => 'Status updated successfully'], 200);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 
     public function getCordinatorTasks()

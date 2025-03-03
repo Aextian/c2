@@ -2,7 +2,7 @@ import { TaskTable } from '@/components/tasks/TaskTable';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 
 const Index = () => {
     const breadcrumbs: BreadcrumbItem[] = [
@@ -16,14 +16,12 @@ const Index = () => {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="tasks" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-                <Button className='self-end' variant="outline" asChild>
-                <Link href={route('tasks.create')} >
-                    Create User
-                </Link>
+                <Button className="self-end" variant="outline" asChild>
+                    <Link href={route('tasks.create')}>Create User</Link>
                 </Button>
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 rounded-xl border md:min-h-min">
-                 <TaskTable/>
-                 </div>
+                    <TaskTable />
+                </div>
             </div>
         </AppLayout>
     );

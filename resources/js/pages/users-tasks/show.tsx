@@ -1,16 +1,28 @@
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
-import { IComment, ISubTask, ITask } from '@/types/tasks-types';
+import { IComment, ICordinatorTask } from '@/types/tasks-types';
 import { Head } from '@inertiajs/react';
 import axios from 'axios';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
-const Show = ({ id }: { id: number }) => {
+interface IStatus {
+    status: string;
+}
+
+const Show = () => {
+    const [status, setStatus] = useState<IStatus[]>([
+        {
+            status: '',
+        },
+    ]);
+    const [updating, setUpdating] = useState(false);
     const [sending, setSending] = useState(false);
-    const [subTasks, setSubTasks] = useState<ISubTask[]>([]);
+    const [cordinatorTasks, setCordinatorTasks] = useState<ICordinatorTask[]>([]);
     const [comments, setComments] = useState<IComment[]>([
         {
             sub_task_id: null,
@@ -24,16 +36,18 @@ const Show = ({ id }: { id: number }) => {
         },
     ];
 
-    const fetchCordinatorTasks = async (id: number) => {
-        const response = await axios.get(route('get-task', { id: id }));
-        const task: ITask = response.data;
-        setSubTasks(task?.sub_tasks || []);
-        setComments(task.sub_tasks?.map((subTask: ISubTask) => ({ sub_task_id: subTask.id, comment: '' })) || []);
+    const fetchCordinatorTasks = async () => {
+        const response = await axios.get(route('users-tasks.cordinator-tasks'));
+        const cordinatorTasks = response.data;
+        console.log('cordinatorTasks', cordinatorTasks);
+        setCordinatorTasks(response.data);
+        setStatus(cordinatorTasks.map((task: ICordinatorTask) => ({ status: task.status }))); //get parent task status
+        setComments(cordinatorTasks.map((task: ICordinatorTask) => ({ sub_task_id: Number(task.sub_task_id), comment: '' })));
     };
 
     useEffect(() => {
-        fetchCordinatorTasks(id);
-    }, [id]);
+        fetchCordinatorTasks();
+    }, []);
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>, index: number) => {
         e.preventDefault();
@@ -44,7 +58,9 @@ const Show = ({ id }: { id: number }) => {
                 comment: comments[index].comment,
             };
             const response = await axios.post(route('users-tasks.comment'), data);
-            fetchCordinatorTasks(id); // fetch cordinator tasks again
+
+            fetchCordinatorTasks(); // fetch cordinator tasks again
+
             // clear input comment
             if (response.status === 200) {
                 setComments((prevComments) => {
@@ -70,29 +86,77 @@ const Show = ({ id }: { id: number }) => {
         });
     };
 
+    const handleUpdateStatus = async (e: FormEvent<HTMLFormElement>, index: number, cordinatorTaskId: number) => {
+        e.preventDefault();
+        setUpdating(true);
+
+        try {
+            const updatedStatus = status[index].status;
+            const url = route('users-tasks.update-status', { id: cordinatorTaskId });
+            const response = await axios.post(url, { status: updatedStatus });
+            console.log('response', response);
+            if (response.status === 200) {
+                toast.success(response.data.message);
+                fetchCordinatorTasks();
+                setUpdating(false);
+            }
+        } catch (error) {
+            console.log(error);
+            setUpdating(false);
+            toast.error('Something went wrong');
+        }
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="task" />
+            <Head title="tasks" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 rounded-xl border p-10 md:min-h-min">
                     <div className="grid grid-cols-2 gap-5">
-                        {subTasks.map((subTask, index) => (
+                        {cordinatorTasks.map((cordinator_task, index) => (
                             <div key={index} className="shadow-sidebar-border p-5 shadow-lg">
+                                <div className="col-span-2 flex justify-end">
+                                    <form onSubmit={(e) => handleUpdateStatus(e, index, Number(cordinator_task.id))} className="flex flex-col gap-5">
+                                        <Label>Status</Label>
+                                        <Select
+                                            value={status[index].status}
+                                            onValueChange={(value) => setStatus(status.map((item, i) => (i === index ? { status: value } : item)))}
+                                        >
+                                            <SelectTrigger className="w-[180px]">
+                                                <SelectValue placeholder="Select a fruit" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    <SelectLabel>Status</SelectLabel>
+                                                    <SelectItem value="todo">Todo</SelectItem>
+                                                    <SelectItem value="doing">Doing</SelectItem>
+                                                    <SelectItem value="done">Done</SelectItem>
+                                                    <SelectItem value="cancelled">Cancelled</SelectItem>
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
+                                        <Button disabled={updating} type="submit" className="w-[180px]">
+                                            {updating ? 'Updating...' : 'Update'}
+                                        </Button>
+                                    </form>
+                                </div>
                                 <div className="mb-10 flex gap-5">
                                     <h2 className="font-bold">Title:</h2>
-                                    <span className="font-semibold text-gray-900 first-letter:uppercase dark:text-white">{subTask.task?.title}</span>
+                                    <span className="font-semibold text-gray-900 first-letter:uppercase dark:text-white">
+                                        {cordinator_task?.sub_task.task?.title}
+                                    </span>
                                 </div>
                                 <div className="mb-10 flex gap-5">
                                     <h2 className="font-bold">Task:</h2>
-                                    <span className="text-gray-900 dark:text-white">{subTask.content}</span>
+                                    <span className="text-gray-900 dark:text-white">{cordinator_task.sub_task.content}</span>
                                 </div>
 
                                 {/* comment section */}
                                 <div className="">
                                     <ul className="my-5 flex flex-col gap-2 text-xs">
                                         <li>
-                                            {Array.isArray(subTask?.comments) && subTask.comments.length > 0 ? (
-                                                subTask.comments.map((comment: IComment) => (
+                                            {Array.isArray(cordinator_task?.sub_task?.comments) && cordinator_task.sub_task.comments.length > 0 ? (
+                                                cordinator_task.sub_task.comments.map((comment: IComment) => (
                                                     <div key={comment.id} className="mb-2">
                                                         <span className="font-bold tracking-widest">{comment.user?.name || 'Unknown User'}:</span>{' '}
                                                         {comment.comment}

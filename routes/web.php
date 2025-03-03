@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OpenAIController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\TaskController;
@@ -13,9 +14,9 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
+
+    Route::get('/dashboard', DashboardController::class)->name('dashboard');
+
 
     Route::post('/openai/generate-subtasks', OpenAIController::class); // Route for generating sub-tasks
 
@@ -28,7 +29,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/', [UsersTaskController::class, 'index'])->name('users-tasks.index');
         Route::post('/comment', [UsersTaskController::class, 'storeComment'])->name('users-tasks.comment');
         Route::get('/cordinator-tasks', [UsersTaskController::class, 'getCordinatorTasks'])->name('users-tasks.cordinator-tasks');
+
+        Route::get('/view-task/{id}', [UsersTaskController::class, 'show'])->name('users-tasks.show');
+
+        Route::post('/update-status/{id}', [UsersTaskController::class, 'updateStatus'])->name('users-tasks.update-status');
     });
+
+
+
 
     // tasks
     Route::get('/get-task/{id}', [TaskController::class, 'getTask'])->name('get-task');
