@@ -37,7 +37,8 @@ class UsersTaskController extends Controller
         ]);
 
         try {
-            $cordinatorSubTask =  CordinatorSubTask::find($id)->update(['status' => $request->status]);
+            $cordinatorSubTask =  CordinatorSubTask::find($id);
+            $cordinatorSubTask->update(['status' => $request->status]);
             $subTask = SubTask::with('cordinatorSubTasks')->find($cordinatorSubTask->sub_task_id);
             $stubTaskPercentage = $subTask->percentage;
             $totalCordinatorPercentage = $subTask->cordinatorSubTasks()->sum('percentage');
@@ -55,7 +56,7 @@ class UsersTaskController extends Controller
     public function getCordinatorTasks()
     {
         $user = auth()->user();
-        $isCordinator = $user->can('cordinator-dashboard');
+        $isCordinator = $user->can('coordinator-dashboard');
         if ($isCordinator) {
             $cordinator_tasks = CordinatorSubTask::query()
                 ->where('user_id', $user->id)

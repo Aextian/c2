@@ -2,6 +2,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { ITask } from '@/types/tasks-types';
 import { Link, usePage } from '@inertiajs/react';
+import DeleteDialog from '../DeleteDialog';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Progress } from '../ui/progress';
@@ -79,12 +80,17 @@ export function TaskTable() {
                             <Button variant="default" size="sm" asChild>
                                 <Link href={route('tasks.edit', task.id)}>Edit</Link>
                             </Button>
-                            <Button variant="destructive" size="sm">
-                                Delete
-                            </Button>
+                            <DeleteDialog url="tasks.destroy" id={task.id} />
                         </TableCell>
                     </TableRow>
                 ))}
+                {tasks.length === 0 && (
+                    <TableRow>
+                        <TableCell colSpan={6} className="font-medium">
+                            <h1 className="first-letter:uppercase">No Task Available</h1>
+                        </TableCell>
+                    </TableRow>
+                )}
             </TableBody>
         </Table>
     );

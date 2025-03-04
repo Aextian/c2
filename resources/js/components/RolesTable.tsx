@@ -1,5 +1,6 @@
 import { IRole } from '@/types/permission';
 import { Link, usePage } from '@inertiajs/react';
+import DeleteDialog from './DeleteDialog';
 import { Button } from './ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
 
@@ -18,10 +19,11 @@ const RolesTable = () => {
                 {roles.map((role) => (
                     <TableRow key={role.id}>
                         <TableCell className="font-medium">{role.name}</TableCell>
-                        <TableCell>
-                            <Button variant="outline">
+                        <TableCell className="flex gap-2">
+                            <Button variant="outline" size={'sm'}>
                                 <Link href={route('permissions.edit', role.id)}>Edit</Link>
                             </Button>
+                            <DeleteDialog url="permissions.destroy" id={role.id} />
                         </TableCell>
                     </TableRow>
                 ))}

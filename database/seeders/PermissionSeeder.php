@@ -42,7 +42,7 @@ class PermissionSeeder extends Seeder
         }
 
         // Get all permissions and assign them to admin
-        $admin->syncPermissions(Permission::all());
+        $admin->syncPermissions(Permission::where('name', '!=', 'coordinator-dashboard')->get());
 
         // Create an Admin User
         $adminUser = User::firstOrCreate(

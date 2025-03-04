@@ -15,17 +15,19 @@ class DashboardController extends Controller
     public function __invoke(Request $request)
     {
         $user = auth()->user();
-        $isCordinator = $user->can('cordinator-dashbord');
+        $isCordinator = $user->can('coordinator-dashboard');
+
         if ($isCordinator) {
-            return inertia('dashboard', [
-                'tasks' => Task::all(),
-            ]);
-        } else {
             $cordinatorSubTasksIds = CordinatorSubTask::where('user_id', $user->id)->pluck('sub_task_id')->toArray(); // Get the subtask ids
             $taskIds = SubTask::whereIn('id', $cordinatorSubTasksIds)->pluck('task_id')->toArray(); // Get the task ids
             $tasks = Task::whereIn('id', $taskIds)->get();
             return inertia('dashboard', [
                 'tasks' => $tasks
+            ]);
+        } else {
+
+            return inertia('dashboard', [
+                'tasks' => Task::all(),
             ]);
         }
     }

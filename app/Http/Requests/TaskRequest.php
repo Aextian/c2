@@ -37,7 +37,7 @@ class TaskRequest extends FormRequest
             'content.required' => 'The content field is required.',
             'type.required' => 'The type field is required.',
             'deadLine.required' => 'The deadLine field is required.',
-            'deadLine.after' => 'The deadLine must be a date after today.',
+            'deadLine.after' => 'The due date must be a date after today.',
         ];
     }
 }
