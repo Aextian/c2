@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import usePermissions from '@/hooks/usePermissions';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
-import { TPermission } from '@/types/permission';
+import { IRole, TPermission } from '@/types/permission';
 import { Head, useForm } from '@inertiajs/react';
 import React, { FormEvent } from 'react';
 
@@ -18,18 +18,19 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 interface IProps {
     permissions: TPermission[];
+    role: IRole;
 }
 
-const Create = ({ permissions }: IProps) => {
-    const { post, setData, data, processing, errors } = useForm<TPermission>({
-        name: '',
-        permissions: [],
+const Create = ({ role, permissions }: IProps) => {
+    const { put, setData, data, processing, errors } = useForm<TPermission>({
+        name: role.name,
+        permissions: role?.permissions?.map((permission) => permission.name) ?? [],
     });
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const url = route('permissions.store');
-        post(url, {
+        const url = route('permissions.update', role.id);
+        put(url, {
             preserveState: true,
             preserveScroll: true,
         });
@@ -65,7 +66,16 @@ const Create = ({ permissions }: IProps) => {
                     <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
                         {Object.entries(groupedPermissions).map(([header, group]) => (
                             <div key={header}>
-                                <h2 className="font-bold">{header}</h2>
+                                <div className="flex flex-col gap-5">
+                                    <h2 className="font-bold">{header}</h2>
+                                    {header === 'COORDINATOR' && (
+                                        <p className="mb-5 text-xs text-red-400">
+                                            "Note: By selecting the coordinator, the default dashboard will be replaced with the coordinator's
+                                            dashboard."
+                                        </p>
+                                    )}
+                                </div>
+
                                 <ul>
                                     {group.map((permission) => (
                                         <li key={permission.id} className="mt-2">
@@ -90,7 +100,7 @@ const Create = ({ permissions }: IProps) => {
                 <div className="flex justify-end">
                     <Button type="submit" disabled={processing}>
                         {' '}
-                        {processing ? 'Creating...' : 'Create'}
+                        {processing ? 'Updating...' : 'Update'}
                     </Button>
                 </div>
             </form>

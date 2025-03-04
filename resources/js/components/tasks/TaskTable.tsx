@@ -76,8 +76,8 @@ export function TaskTable() {
                             <Button variant="outline" size="sm" asChild>
                                 <Link href={route('tasks.show', task.id)}>View</Link>
                             </Button>
-                            <Button variant="default" size="sm">
-                                Edit
+                            <Button variant="default" size="sm" asChild>
+                                <Link href={route('tasks.edit', task.id)}>Edit</Link>
                             </Button>
                             <Button variant="destructive" size="sm">
                                 Delete

@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('task_comments', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->unsignedBigInteger('sub_task_id');
-            $table->foreign('sub_task_id')->references('id')->on('sub_tasks');
+            $table->foreign('sub_task_id')->references('id')->on('sub_tasks')->onDelete('cascade');
             $table->string('comment');
             $table->string('file_path')->nullable();
             $table->timestamps();

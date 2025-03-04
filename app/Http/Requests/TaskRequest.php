@@ -26,7 +26,18 @@ class TaskRequest extends FormRequest
             'content' => ['required'],
             'type' => ['required'],
             'options' => ['array'],
-            'deadLine' => ['required', 'date'],
+            'deadLine' => ['required', 'date', 'after:now'],
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'title.required' => 'The title field is required.',
+            'content.required' => 'The content field is required.',
+            'type.required' => 'The type field is required.',
+            'deadLine.required' => 'The deadLine field is required.',
+            'deadLine.after' => 'The deadLine must be a date after today.',
         ];
     }
 }

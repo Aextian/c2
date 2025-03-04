@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('sub_tasks', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('task_id');
-            $table->foreign('task_id')->references('id')->on('tasks');
+            $table->foreign('task_id')->references('id')->on('tasks')->onDelete('cascade');
             $table->string('content');
+            $table->boolean('is_completed')->default(false);
             $table->decimal('percentage', 5, 2)->nullable();
             $table->timestamps();
         });

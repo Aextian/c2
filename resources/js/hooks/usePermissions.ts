@@ -1,7 +1,7 @@
-import { IPermission } from '@/types/permission';
+import { TPermission } from '@/types/permission';
 
-const usePermissions = (permissions: IPermission[]): Record<string, IPermission[]> => {
-    return permissions.reduce<Record<string, IPermission[]>>((groups, permission) => {
+const usePermissions = (permissions: TPermission[]): Record<string, TPermission[]> => {
+    return permissions.reduce<Record<string, TPermission[]>>((groups, permission) => {
         const category = permission.name.split('-')[0].toUpperCase();
 
         // Initialize the category if it doesn't exist

@@ -7,28 +7,31 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAppearance } from '@/hooks/use-appearance';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
+import { ITask } from '@/types/tasks-types';
 import { IUser } from '@/types/users-types';
 import { Head, useForm } from '@inertiajs/react';
 import { ChangeEvent, useRef, useState } from 'react';
 import Select from 'react-select';
+import { toast } from 'react-toastify';
 
 export type TOption = {
+    id?: number;
     subTask: string;
     userIds?: number[];
 };
 interface IProps {
     users: IUser[];
+    task: ITask;
 }
-interface ITaskForm {
+type TTaskForm = {
     title: string;
     content: string;
     options: TOption[];
     deadLine: string;
     type: 'minor' | 'important' | 'urgent';
-    [key: string]: string | number | TOption[];
-}
+};
 
-const Create = ({ users }: IProps) => {
+const Create = ({ users, task }: IProps) => {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Tasks',
@@ -42,12 +45,17 @@ const Create = ({ users }: IProps) => {
 
     const isDark = appearance === 'dark'; // Check if dark mode is enabled
 
-    const { post, setData, data, errors, processing, clearErrors, reset } = useForm<ITaskForm>({
-        title: '',
-        content: '',
-        deadLine: '',
-        type: 'minor',
-        options: [],
+    const { put, setData, data, errors, processing, clearErrors, reset } = useForm<TTaskForm>({
+        title: task.title,
+        content: task.content,
+        deadLine: task.dead_line ?? '',
+        type: task.type,
+        options:
+            task.sub_tasks?.map((subTask) => ({
+                id: subTask.id,
+                subTask: subTask.content,
+                userIds: subTask.cordinator_sub_tasks?.map((user) => user.user_id).filter((id) => id !== undefined) ?? [],
+            })) ?? [],
     });
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -73,8 +81,8 @@ const Create = ({ users }: IProps) => {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const url = route('tasks.store');
-        post(url, {
+        const url = route('tasks.update', task.id);
+        put(url, {
             preserveState: true,
             preserveScroll: true,
             onSuccess: () => {
@@ -108,16 +116,14 @@ const Create = ({ users }: IProps) => {
                         .replace(/\*\*/g, '') // Remove all occurrences of "**"
                         .trim(),
                 );
-
-            if (selectRef.current) selectRef.current?.clearValue(); // clear previously selected options
-
             setData((prevData) => ({
                 ...prevData,
-                options: subtasksArray.map((subtask: string) => ({
+                options: subtasksArray.map((subtask: string, i: number) => ({
+                    ...prevData.options[i],
                     subTask: subtask,
-                    userIds: [], // Preserve existing userIds if they exist
                 })),
             }));
+            toast.success('Sub-tasks generated successfully');
         } catch (error) {
             setGenerating(false);
             console.error('Error generating sub-tasks:', error);
@@ -129,8 +135,6 @@ const Create = ({ users }: IProps) => {
         value: user.id as number,
         label: user.name,
     }));
-
-    console.log('errors', errors);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -149,7 +153,10 @@ const Create = ({ users }: IProps) => {
                                 <Input onChange={handleChange} value={data.title} type="text" name="title" />
                                 <InputError message={errors.title} />
                                 <Label>Type</Label>
-                                <SelectPrimitive onValueChange={(value) => setData({ ...data, type: value as Pick<ITaskForm, 'type'>['type'] })}>
+                                <SelectPrimitive
+                                    value={data.type}
+                                    onValueChange={(value) => setData({ ...data, type: value as Pick<TTaskForm, 'type'>['type'] })}
+                                >
                                     <SelectTrigger>
                                         <SelectValue placeholder="Select a type" />
                                     </SelectTrigger>
@@ -173,7 +180,7 @@ const Create = ({ users }: IProps) => {
                                 />
                                 <InputError message={errors.content} />
                                 <Button type="button" disabled={isGenerating || !data.title} onClick={generateSubTasks}>
-                                    {isGenerating ? 'Generating...' : 'Generate Subtasks'}
+                                    {isGenerating ? 'Regenerating...' : 'Regenerate Subtasks'}
                                 </Button>
                             </div>
                             <div className="grid grid-cols-1 gap-4">
@@ -195,11 +202,20 @@ const Create = ({ users }: IProps) => {
                                             isSearchable={true}
                                             isMulti
                                             required
+                                            value={
+                                                data.options[index]?.userIds &&
+                                                data.options[index]?.userIds.map((id) => usersOptions.find((user) => user.value === id))
+                                            }
                                             onChange={(data) =>
-                                                setData((prevValues) => ({
+                                                setData((prevValues: TTaskForm) => ({
                                                     ...prevValues,
-                                                    options: prevValues.options.map((option, i) =>
-                                                        i === index ? { ...option, userIds: data.map((item) => item.value) } : option,
+                                                    options: prevValues.options.map((option: TOption, i: number) =>
+                                                        i === index
+                                                            ? {
+                                                                  ...option,
+                                                                  userIds: data.map((item) => item && item.value).filter((id) => id !== undefined),
+                                                              }
+                                                            : option,
                                                     ),
                                                 }))
                                             }
@@ -243,7 +259,7 @@ const Create = ({ users }: IProps) => {
                         {data.options && data.options.length > 0 && (
                             <div className="flex justify-end">
                                 <Button disabled={isGenerating || processing} type="submit">
-                                    Submit
+                                    {processing ? 'Updating...' : 'Update'}
                                 </Button>
                             </div>
                         )}

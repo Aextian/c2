@@ -1,10 +1,10 @@
 import { IUser } from '@/types/users-types';
 import { usePage } from '@inertiajs/react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
+import { Badge } from './ui/badge';
 
 const UsersTable = () => {
     const { users } = usePage<{ users: IUser[] }>().props;
-
     return (
         <Table>
             <TableHeader>
@@ -19,9 +19,9 @@ const UsersTable = () => {
                         <TableCell className="font-medium">{user.name}</TableCell>
                         <TableCell className="font-medium">
                             {user?.roles?.map((role, roleIndex) => (
-                                <span key={roleIndex} className="badge badge-primary badge-xs mr-1">
+                                <Badge variant="outline" key={roleIndex} >
                                     {role.name}
-                                </span>
+                                </Badge>
                             ))}
                         </TableCell>
                     </TableRow>

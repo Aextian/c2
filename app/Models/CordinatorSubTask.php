@@ -11,6 +11,7 @@ class CordinatorSubTask extends Model
     protected $fillable = [
         'user_id',
         'sub_task_id',
+        'percentage',
         'status',
     ];
 

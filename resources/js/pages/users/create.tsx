@@ -45,9 +45,8 @@ const Create = ({ roles }: IProps) => {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="users" />
-            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+            <div className="flex w-6/12 h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 rounded-xl border p-10 md:min-h-min">
-                    {/* <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" /> */}
                     <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-5">
                         <Label>Name</Label>
                         <Input onChange={handleChange} value={data.name} type="text" name="name" />
@@ -80,7 +79,7 @@ const Create = ({ roles }: IProps) => {
                                     </option>
                                 ))}
                             </select>
-                            <InputError message="" className="mt-2" />
+                            <InputError message={errors.roles} className="mt-2" />
                         </Label>
 
                         <Button disabled={processing} type="submit">

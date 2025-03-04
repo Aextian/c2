@@ -11,12 +11,17 @@ class SubTask extends Model
     protected $fillable = [
         'task_id',
         'content',
+        'is_completed',
         'percentage',
     ];
 
     public function task(): BelongsTo
     {
         return $this->belongsTo(Task::class);
+    }
+    public function cordinatorSubTasks(): HasMany
+    {
+        return $this->hasMany(CordinatorSubTask::class);
     }
 
     public function comments(): HasMany

@@ -15,7 +15,6 @@ class UsersTaskController extends Controller
     public function index()
     {
         $userId = Auth::id();
-
         return inertia('users-tasks/index', [
             'cordinator_tasks' => CordinatorSubTask::query()
                 ->where('user_id', $userId)
@@ -36,8 +35,16 @@ class UsersTaskController extends Controller
         $request->validate([
             'status' => 'required',
         ]);
+
         try {
-            CordinatorSubTask::find($id)->update(['status' => $request->status]);
+            $cordinatorSubTask =  CordinatorSubTask::find($id)->update(['status' => $request->status]);
+            $subTask = SubTask::with('cordinatorSubTasks')->find($cordinatorSubTask->sub_task_id);
+            $stubTaskPercentage = $subTask->percentage;
+            $totalCordinatorPercentage = $subTask->cordinatorSubTasks()->sum('percentage');
+
+            if ($stubTaskPercentage == $totalCordinatorPercentage) {
+                $subTask->update(['status' => 'completed']);
+            }
 
             return response()->json(['message' => 'Status updated successfully'], 200);
         } catch (\Throwable $th) {
@@ -47,12 +54,19 @@ class UsersTaskController extends Controller
 
     public function getCordinatorTasks()
     {
-        $userId = Auth::id();
-
-        $cordinator_tasks = CordinatorSubTask::query()
-            ->where('user_id', $userId)
-            ->with('subTask.task', 'subTask.comments.user')
-            ->get();
+        $user = auth()->user();
+        $isCordinator = $user->can('cordinator-dashboard');
+        if ($isCordinator) {
+            $cordinator_tasks = CordinatorSubTask::query()
+                ->where('user_id', $user->id)
+                ->with('subTask.task', 'subTask.comments.user')
+                ->get();
+        } else {
+            $cordinator_tasks = CordinatorSubTask::query()
+                // ->where('user_id', $user->id) //remove this to get all tasks
+                ->with('subTask.task', 'subTask.comments.user')
+                ->get();
+        }
 
         return response()->json($cordinator_tasks);
     }
@@ -63,6 +77,7 @@ class UsersTaskController extends Controller
             'subTaskId' => 'required',
             'comment' => 'required',
         ]);
+
         try {
             $userId = Auth::id();
 

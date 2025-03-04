@@ -35,9 +35,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/update-status/{id}', [UsersTaskController::class, 'updateStatus'])->name('users-tasks.update-status');
     });
 
-
-
-
     // tasks
     Route::get('/get-task/{id}', [TaskController::class, 'getTask'])->name('get-task');
 });

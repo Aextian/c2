@@ -1,50 +1,41 @@
-import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, LucideThermometerSnowflake, Users } from 'lucide-react';
+import { LayoutGrid, LucideThermometerSnowflake, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
-        url: '/dashboard',
+        url: route('dashboard'),
+        activeUrl: ['/dashboard'],
         icon: LayoutGrid,
     },
     {
         title: 'Users',
         url: route('users.index'),
+        activeUrl: ['/users', '/users/create'],
         icon: Users,
     },
     {
         title: 'Roles and Permissions',
         url: route('permissions.index'),
+        activeUrl: ['/permissions', '/permissions/create'],
         icon: Users,
     },
     {
         title: 'Task',
         url: route('tasks.index'),
+        activeUrl: ['/tasks', '/tasks/create'],
         icon: LucideThermometerSnowflake,
     },
     {
         title: 'Task Assign',
         url: route('users-tasks.index'),
+        activeUrl: ['/users-tasks', '/users-tasks/create'],
         icon: LucideThermometerSnowflake,
-    },
-];
-
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        url: 'https://github.com/laravel/react-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        url: 'https://laravel.com/docs/starter-kits',
-        icon: BookOpen,
     },
 ];
 

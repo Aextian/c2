@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('comment_replies', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('comment_id');
-            $table->foreign('comment_id')->references('id')->on('task_comments');
+            $table->foreign('comment_id')->references('id')->on('task_comments')->onDelete('cascade');
             $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->text('reply');
             $table->timestamps();
         });

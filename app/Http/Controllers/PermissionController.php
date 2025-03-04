@@ -50,19 +50,19 @@ class PermissionController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
-    {
-        //
+    { {
+            $user = auth()->user();
+            if ($user->can('role-edit')) {
+                return inertia('permissions/edit', [
+                    'role' => Role::with('permissions')->find($id),
+                    'permissions' => Permission::get(),
+                ]);
+            }
+            return back()->with('error', 'You do not have permission to edit this role.');
+        }
     }
 
     /**
@@ -70,7 +70,17 @@ class PermissionController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'name' => 'required|unique:roles,name,' . $id,
+            'permissions' => 'required',
+        ]);
+
+        $role = Role::find($id);
+        $role->name = $request->input('name');
+        $role->save();
+        $role->syncPermissions($request->input('permissions'));
+
+        return redirect()->route('permissions.index')->with('success', 'Role updated successfully');
     }
 
     /**

@@ -17,7 +17,7 @@ const Index = () => {
             <Head title="tasks" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <Button className="self-end" variant="outline" asChild>
-                    <Link href={route('tasks.create')}>Create User</Link>
+                    <Link href={route('tasks.create')}>Create Task</Link>
                 </Button>
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 rounded-xl border md:min-h-min">
                     <TaskTable />

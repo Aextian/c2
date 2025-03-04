@@ -1,5 +1,6 @@
 import { IRole } from '@/types/permission';
-import { usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
+import { Button } from './ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
 
 const RolesTable = () => {
@@ -17,6 +18,11 @@ const RolesTable = () => {
                 {roles.map((role) => (
                     <TableRow key={role.id}>
                         <TableCell className="font-medium">{role.name}</TableCell>
+                        <TableCell>
+                            <Button variant="outline">
+                                <Link href={route('permissions.edit', role.id)}>Edit</Link>
+                            </Button>
+                        </TableCell>
                     </TableRow>
                 ))}
             </TableBody>

@@ -39,7 +39,6 @@ const Show = () => {
     const fetchCordinatorTasks = async () => {
         const response = await axios.get(route('users-tasks.cordinator-tasks'));
         const cordinatorTasks = response.data;
-        console.log('cordinatorTasks', cordinatorTasks);
         setCordinatorTasks(response.data);
         setStatus(cordinatorTasks.map((task: ICordinatorTask) => ({ status: task.status }))); //get parent task status
         setComments(cordinatorTasks.map((task: ICordinatorTask) => ({ sub_task_id: Number(task.sub_task_id), comment: '' })));

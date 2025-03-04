@@ -6,7 +6,7 @@ export interface ITask {
     title: string;
     content: string;
     dead_line?: string;
-    type: string;
+    type: 'minor' | 'important' | 'urgent';
     status: string;
     percentage?: number;
     sub_tasks?: ISubTask[];
@@ -20,6 +20,7 @@ export interface ISubTask {
     task?: ITask;
     comments?: IComment;
     cordinator_task?: ICordinatorTask;
+    cordinator_sub_tasks?: ICordinatorSubTask[];
 }
 
 export interface ICordinatorTask {
@@ -29,6 +30,13 @@ export interface ICordinatorTask {
     status: string;
     sub_task: ISubTask;
     user?: IUser;
+}
+
+export interface ICordinatorSubTask {
+    id?: number;
+    user_id?: number;
+    percentage?: number;
+    status: 'todo' | 'doing' | 'done' | 'cancelled';
 }
 
 export interface IComment {

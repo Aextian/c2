@@ -19,9 +19,22 @@ class PermissionSeeder extends Seeder
         $admin = Role::create(['name' => 'admin']);
         // Create Permissions
         $permissions = [
-            'create-task',
-            'edit-task',
-            'delete-task',
+            // User Permissions
+            'user-create',
+            'user-delete',
+            'user-edit',
+            // Role Permissions
+            'role-create',
+            'role-delete',
+            'role-edit',
+            // Task Permissions
+            'task-create',
+            'task-delete',
+            'task-edit',
+            // chart Permissions
+            'chart-view',
+            //dashboard Permissions
+            'coordinator-dashboard',
 
         ];
         foreach ($permissions as $permission) {
