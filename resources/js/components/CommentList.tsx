@@ -11,14 +11,20 @@ interface CommentListProps {
     sending: boolean;
     fetchCordinatorTasks: () => void;
 }
+export type TReply = {
+    content: string;
+    file_path?: string | null | File;
+};
 
 const CommentList = ({ comment, sending, fetchCordinatorTasks }: CommentListProps) => {
     const [showReply, setShowReply] = useState(false);
     const [viewReply, setViewReply] = useState(false);
-    const { post, data, setData, clearErrors, reset } = useForm({
+    const { post, data, setData, clearErrors, reset } = useForm<TReply>({
         content: '',
+        file_path: '',
     });
 
+    console.log('data', data);
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>, commentId?: number) => {
         e.preventDefault();
         const url = route('reply-comment.store', commentId);
@@ -79,8 +85,10 @@ const CommentList = ({ comment, sending, fetchCordinatorTasks }: CommentListProp
                 {showReply && (
                     <form className="mx-10 mt-5" onSubmit={(e) => handleSubmit(e, comment.id)}>
                         <Textarea value={data.content} onChange={(e) => setData('content', e.target.value)} placeholder="Enter your reply..." />
-                        <div className="mt-5 flex justify-end">
-                            <Button className="px-10" disabled={sending}>
+                        <div className="mt-5 flex flex-col justify-end gap-2">
+                            {/* <FileReply setData={setData} /> */}
+
+                            <Button className="self-end px-10" disabled={sending}>
                                 Send
                             </Button>
                         </div>

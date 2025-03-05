@@ -80,7 +80,7 @@ class UsersTaskController extends Controller
         if ($isCordinator) {
             $cordinator_tasks = CordinatorSubTask::query()
                 ->where('user_id', $user->id)
-                ->with('subTask.task', 'subTask.comments.user')
+                ->with('subTask.task', 'subTask.comments.user', 'subTask.comments.replies.user')
                 ->get();
         } else {
             $cordinator_tasks = CordinatorSubTask::query()

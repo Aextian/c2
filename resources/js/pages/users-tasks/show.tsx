@@ -16,6 +16,11 @@ interface IStatus {
     status: string;
 }
 
+type TFileName = {
+    sub_task_id: number | null;
+    name: string;
+};
+
 const Show = () => {
     const [status, setStatus] = useState<IStatus[]>([
         {
@@ -33,6 +38,14 @@ const Show = () => {
             file_path: '',
         },
     ]);
+
+    const [fileNames, setFileNames] = useState<TFileName[]>([
+        {
+            sub_task_id: null,
+            name: '',
+        },
+    ]);
+
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Tasks',
@@ -46,6 +59,7 @@ const Show = () => {
         setCordinatorTasks(response.data);
         setStatus(cordinatorTasks.map((task: ICordinatorTask) => ({ status: task.status }))); //get parent task status
         setComments(cordinatorTasks.map((task: ICordinatorTask) => ({ sub_task_id: Number(task.sub_task_id), comment: '' })));
+        setFileNames(cordinatorTasks.map((task: ICordinatorTask) => ({ sub_task_id: Number(task.sub_task_id), name: '' })));
     };
 
     useEffect(() => {
@@ -176,6 +190,7 @@ const Show = () => {
                                             )}
                                         </li>
                                     </ul>
+
                                     <form onSubmit={(e) => handleSubmit(e, index)}>
                                         {comments[index] && comments[index].sub_task_id && (
                                             <Textarea
@@ -186,7 +201,12 @@ const Show = () => {
                                         )}
                                         <div className="mt-5 flex justify-end">
                                             <div className="flex flex-col gap-2">
-                                                <InputFile setComments={setComments} index={index} />
+                                                <InputFile
+                                                    setComments={setComments}
+                                                    setFileNames={setFileNames}
+                                                    fileNames={fileNames}
+                                                    index={index}
+                                                />
                                                 <Button className="px-10" disabled={sending}>
                                                     Send
                                                 </Button>
