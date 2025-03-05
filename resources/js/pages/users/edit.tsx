@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { IRole } from '@/types/permission';
+import { IUser } from '@/types/users-types';
 import { Head, useForm } from '@inertiajs/react';
 import { ChangeEvent } from 'react';
 
@@ -17,15 +18,16 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 interface IProps {
     roles: IRole[];
+    user: IUser;
 }
 
-const Create = ({ roles }: IProps) => {
-    const { post, setData, data, processing, errors } = useForm({
-        name: '',
-        email: '',
+const Create = ({ roles, user }: IProps) => {
+    const { put, setData, data, processing, errors } = useForm({
+        name: user.name,
+        email: user.email,
         password: '',
         password_confirmation: '',
-        roles: [],
+        roles: user.roles?.map((role) => role.name) || [],
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -40,8 +42,9 @@ const Create = ({ roles }: IProps) => {
 
     const handleSubmit = (e: ChangeEvent<HTMLFormElement>) => {
         e.preventDefault();
-        post(route('users.store'));
+        put(route('users.update', user.id));
     };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="users" />

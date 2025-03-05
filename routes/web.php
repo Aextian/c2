@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\OpenAIController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\TaskController;
@@ -13,7 +15,7 @@ Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
@@ -27,7 +29,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // cordinator tasks
     Route::prefix('users-tasks')->group(function () {
         Route::get('/', [UsersTaskController::class, 'index'])->name('users-tasks.index');
-        Route::post('/comment', [UsersTaskController::class, 'storeComment'])->name('users-tasks.comment');
+
+        Route::post('/comment', [CommentController::class, 'storeComment'])->name('users-tasks.comment');
+        Route::post('/reply-comment/{id}', [CommentController::class, 'storeReply'])->name('reply-comment.store');
+
+        // download file
+        Route::get('/download', [FileController::class, 'downloadFile'])->name('download');
+
+
         Route::get('/cordinator-tasks', [UsersTaskController::class, 'getCordinatorTasks'])->name('users-tasks.cordinator-tasks');
 
         Route::get('/view-task/{id}', [UsersTaskController::class, 'show'])->name('users-tasks.show');

@@ -8,6 +8,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Task extends Model
 {
 
+    protected $casts = [
+        'percentage' => 'float',
+        'is_completed' => 'boolean',
+    ];
+
+    protected $appends = ['progress'];
 
     protected $fillable = [
         'user_id',
@@ -16,6 +22,7 @@ class Task extends Model
         'type',
         'dead_line',
         'percentage',
+        'status',
     ];
     public function cordinatorTasks(): HasMany
     {
@@ -25,5 +32,10 @@ class Task extends Model
     public function subTasks(): HasMany
     {
         return $this->hasMany(SubTask::class);
+    }
+
+    public function getProgressAttribute(): float
+    {
+        return (float) $this->subTasks()->where('is_completed', true)->sum('percentage');
     }
 }

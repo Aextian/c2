@@ -1,3 +1,5 @@
+import CommentList from '@/components/CommentList';
+import { InputFile } from '@/components/InputFile';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -23,10 +25,12 @@ const Show = () => {
     const [updating, setUpdating] = useState(false);
     const [sending, setSending] = useState(false);
     const [cordinatorTasks, setCordinatorTasks] = useState<ICordinatorTask[]>([]);
+
     const [comments, setComments] = useState<IComment[]>([
         {
             sub_task_id: null,
             comment: '',
+            file_path: '',
         },
     ]);
     const breadcrumbs: BreadcrumbItem[] = [
@@ -51,13 +55,19 @@ const Show = () => {
     const handleSubmit = async (e: FormEvent<HTMLFormElement>, index: number) => {
         e.preventDefault();
         setSending(true);
+
         try {
             const data = {
                 subTaskId: comments[index].sub_task_id,
                 comment: comments[index].comment,
+                filePath: comments[index].file_path,
             };
-            const response = await axios.post(route('users-tasks.comment'), data);
 
+            const response = await axios.post(route('users-tasks.comment'), data, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
             fetchCordinatorTasks(); // fetch cordinator tasks again
 
             // clear input comment
@@ -75,7 +85,7 @@ const Show = () => {
             setSending(false);
         }
     };
-
+    // handle comment
     const handleCommentChange = (e: ChangeEvent<HTMLTextAreaElement>, index: number) => {
         const { value } = e.target;
         setComments((prevComments) => {
@@ -93,7 +103,6 @@ const Show = () => {
             const updatedStatus = status[index].status;
             const url = route('users-tasks.update-status', { id: cordinatorTaskId });
             const response = await axios.post(url, { status: updatedStatus });
-            console.log('response', response);
             if (response.status === 200) {
                 toast.success(response.data.message);
                 fetchCordinatorTasks();
@@ -130,7 +139,6 @@ const Show = () => {
                                                     <SelectItem value="todo">Todo</SelectItem>
                                                     <SelectItem value="doing">Doing</SelectItem>
                                                     <SelectItem value="done">Done</SelectItem>
-                                                    <SelectItem value="cancelled">Cancelled</SelectItem>
                                                 </SelectGroup>
                                             </SelectContent>
                                         </Select>
@@ -156,10 +164,12 @@ const Show = () => {
                                         <li>
                                             {Array.isArray(cordinator_task?.sub_task?.comments) && cordinator_task.sub_task.comments.length > 0 ? (
                                                 cordinator_task.sub_task.comments.map((comment: IComment) => (
-                                                    <div key={comment.id} className="mb-2">
-                                                        <span className="font-bold tracking-widest">{comment.user?.name || 'Unknown User'}:</span>{' '}
-                                                        {comment.comment}
-                                                    </div>
+                                                    <CommentList
+                                                        key={comment.id}
+                                                        comment={comment}
+                                                        sending={sending}
+                                                        fetchCordinatorTasks={fetchCordinatorTasks}
+                                                    />
                                                 ))
                                             ) : (
                                                 <p className="text-gray-500">No comments .</p>
@@ -175,9 +185,12 @@ const Show = () => {
                                             />
                                         )}
                                         <div className="mt-5 flex justify-end">
-                                            <Button className="px-10" disabled={sending}>
-                                                Send
-                                            </Button>
+                                            <div className="flex flex-col gap-2">
+                                                <InputFile setComments={setComments} index={index} />
+                                                <Button className="px-10" disabled={sending}>
+                                                    Send
+                                                </Button>
+                                            </div>
                                         </div>
                                     </form>
                                 </div>

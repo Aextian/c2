@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('sub_task_id');
             $table->foreign('sub_task_id')->references('id')->on('sub_tasks')->onDelete('cascade');
             $table->decimal('percentage', 5, 2)->nullable();
-            $table->enum('status', ['todo', 'doing', 'done', 'cancelled'])->default('todo');
+            $table->enum('status', ['todo', 'doing', 'done',])->default('todo');
             $table->timestamps();
         });
     }

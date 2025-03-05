@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CordinatorSubTask;
 use App\Models\CordinatorTask;
 use App\Models\SubTask;
+use App\Models\Task;
 use App\Models\TaskComment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -40,12 +41,31 @@ class UsersTaskController extends Controller
             $cordinatorSubTask =  CordinatorSubTask::find($id);
             $cordinatorSubTask->update(['status' => $request->status]);
             $subTask = SubTask::with('cordinatorSubTasks')->find($cordinatorSubTask->sub_task_id);
-            $stubTaskPercentage = $subTask->percentage;
-            $totalCordinatorPercentage = $subTask->cordinatorSubTasks()->sum('percentage');
+            $subTaskPercentage = $subTask->percentage;
+            $totalCordinatorPercentage = $subTask->cordinatorSubTasks()->where('status', 'done')->sum('percentage');
 
-            if ($stubTaskPercentage == $totalCordinatorPercentage) {
-                $subTask->update(['status' => 'completed']);
+            // check if task is doing
+            $taskDoing = $subTask->cordinatorSubTasks()->where('status', 'doing')->exists();
+
+            $task = Task::with('subTasks')->find($subTask->task_id);
+
+            if ($taskDoing) {
+                $task->update(['status' => 'doing']);
+            } else {
+                $task->update(['status' => 'todo']);
             }
+
+            // update subtask status
+            if ($subTaskPercentage == $totalCordinatorPercentage) {
+                $subTask->update(['is_completed' => true]);
+
+                // update task status
+                $taskPercentage = $task->subTasks()->where('is_completed', true)->sum('percentage');
+
+                if ($taskPercentage == $task->percentage) {
+                    $task->update(['status' => 'done']);
+                }
+            };
 
             return response()->json(['message' => 'Status updated successfully'], 200);
         } catch (\Throwable $th) {
@@ -64,34 +84,10 @@ class UsersTaskController extends Controller
                 ->get();
         } else {
             $cordinator_tasks = CordinatorSubTask::query()
-                // ->where('user_id', $user->id) //remove this to get all tasks
-                ->with('subTask.task', 'subTask.comments.user')
+                ->with('subTask.task', 'subTask.comments.user', 'subTask.comments.replies.user')
                 ->get();
         }
 
         return response()->json($cordinator_tasks);
-    }
-
-    public function storeComment(Request $request)
-    {
-        $request->validate([
-            'subTaskId' => 'required',
-            'comment' => 'required',
-        ]);
-
-        try {
-            $userId = Auth::id();
-
-            TaskComment::create([
-                'user_id' => $userId,
-                'sub_task_id' => $request->subTaskId,
-                'comment' => $request->comment,
-                'file_path' => $request->filePath
-            ]);
-            // return response()->json(['message' => 'Comment added successfully'], 200);
-            return redirect()->back()->with('success', 'Comment added successfully');
-        } catch (\Throwable $th) {
-            throw $th;
-        }
     }
 }

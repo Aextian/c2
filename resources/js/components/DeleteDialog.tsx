@@ -32,6 +32,7 @@ const DeleteDialog = ({ url, id }: TProps) => {
             console.log(error);
         }
     };
+
     const closeModal = () => {
         clearErrors();
         reset();
@@ -56,11 +57,9 @@ const DeleteDialog = ({ url, id }: TProps) => {
                         </Button>
                     </AlertDialogCancel>
                     <form onSubmit={handleSubmit}>
-                        <AlertDialogAction asChild>
-                            <Button disabled={processing} type="submit" variant="destructive">
-                                Delete
-                            </Button>
-                        </AlertDialogAction>
+                        <Button disabled={processing} type="submit" variant="destructive" asChild>
+                            <AlertDialogAction>Delete</AlertDialogAction>
+                        </Button>
                     </form>
                 </AlertDialogFooter>
             </AlertDialogContent>

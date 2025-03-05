@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('content');
             $table->date('dead_line')->nullable();
             $table->enum('type', ['minor', 'important', 'urgent'])->default('minor');
-            $table->enum('status', ['todo', 'doing', 'done', 'cancelled'])->default('todo');
+            $table->enum('status', ['todo', 'doing', 'done',])->default('todo');
             $table->decimal('percentage', 5, 2)->nullable();
             $table->timestamps();
         });

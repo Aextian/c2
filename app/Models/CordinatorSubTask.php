@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CordinatorSubTask extends Model
 {
+    protected $casts = [
+        'percentage' => 'float',
+    ];
+
     protected $fillable = [
         'user_id',
         'sub_task_id',

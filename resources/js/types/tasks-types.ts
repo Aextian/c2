@@ -10,6 +10,7 @@ export interface ITask {
     status: string;
     percentage?: number;
     sub_tasks?: ISubTask[];
+    progress?: number;
     cordinator_tasks?: ICordinatorTask[];
 }
 export interface ISubTask {
@@ -36,7 +37,7 @@ export interface ICordinatorSubTask {
     id?: number;
     user_id?: number;
     percentage?: number;
-    status: 'todo' | 'doing' | 'done' | 'cancelled';
+    status: 'todo' | 'doing' | 'done';
 }
 
 export interface IComment {
@@ -44,6 +45,16 @@ export interface IComment {
     user_id?: number;
     sub_task_id?: number | null;
     comment: string;
+    file_path?: string | FileList | null | File;
+    user?: IUser;
+    replies?: IReply[];
+}
+
+export interface IReply {
+    id?: number;
+    comment_id?: number;
+    user_id?: number;
+    content: string;
     file_path?: string;
     user?: IUser;
 }

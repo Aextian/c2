@@ -3,6 +3,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { ITask } from '@/types/tasks-types';
 import { Link, usePage } from '@inertiajs/react';
 import DeleteDialog from '../DeleteDialog';
+import NoDataAvailable from '../NoDataAvailable';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Progress } from '../ui/progress';
@@ -84,13 +85,7 @@ export function TaskTable() {
                         </TableCell>
                     </TableRow>
                 ))}
-                {tasks.length === 0 && (
-                    <TableRow>
-                        <TableCell colSpan={6} className="font-medium">
-                            <h1 className="first-letter:uppercase">No Task Available</h1>
-                        </TableCell>
-                    </TableRow>
-                )}
+                {tasks.length === 0 && <NoDataAvailable colSpan={8} title="No tasks found" />}
             </TableBody>
         </Table>
     );

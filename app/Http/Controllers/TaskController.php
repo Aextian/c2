@@ -54,6 +54,7 @@ class TaskController extends Controller
                     'content' => $request->input('content'),
                     'type' => $request->input('type'),
                     'dead_line' => $request->input('deadLine'),
+                    'percentage' => 100
                 ]);
 
 
