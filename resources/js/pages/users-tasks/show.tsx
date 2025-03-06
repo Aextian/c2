@@ -17,11 +17,11 @@ interface IStatus {
 }
 
 type TFileName = {
-    sub_task_id: number | null;
+    sub_task_id?: number | null;
     name: string;
 };
 
-const Show = () => {
+const Show = ({ id }: { id: number }) => {
     const [status, setStatus] = useState<IStatus[]>([
         {
             status: '',
@@ -54,7 +54,7 @@ const Show = () => {
     ];
 
     const fetchCordinatorTasks = async () => {
-        const response = await axios.get(route('users-tasks.cordinator-tasks'));
+        const response = await axios.get(route('users-tasks.cordinator-tasks', { id: id }));
         const cordinatorTasks = response.data;
         setCordinatorTasks(response.data);
         setStatus(cordinatorTasks.map((task: ICordinatorTask) => ({ status: task.status }))); //get parent task status
@@ -64,7 +64,8 @@ const Show = () => {
 
     useEffect(() => {
         fetchCordinatorTasks();
-    }, []);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [id]);
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>, index: number) => {
         e.preventDefault();
@@ -99,6 +100,7 @@ const Show = () => {
             setSending(false);
         }
     };
+
     // handle comment
     const handleCommentChange = (e: ChangeEvent<HTMLTextAreaElement>, index: number) => {
         const { value } = e.target;
@@ -194,6 +196,7 @@ const Show = () => {
                                     <form onSubmit={(e) => handleSubmit(e, index)}>
                                         {comments[index] && comments[index].sub_task_id && (
                                             <Textarea
+                                                required
                                                 value={comments[index].comment || ''}
                                                 onChange={(e) => handleCommentChange(e, index)}
                                                 placeholder="write your comment"

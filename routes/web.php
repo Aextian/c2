@@ -37,7 +37,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/download', [FileController::class, 'downloadFile'])->name('download');
 
 
-        Route::get('/cordinator-tasks', [UsersTaskController::class, 'getCordinatorTasks'])->name('users-tasks.cordinator-tasks');
+        Route::get('/cordinator-tasks/{id}', [UsersTaskController::class, 'getCordinatorTasks'])->name('users-tasks.cordinator-tasks');
 
         Route::get('/view-task/{id}', [UsersTaskController::class, 'show'])->name('users-tasks.show');
 

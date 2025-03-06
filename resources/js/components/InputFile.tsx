@@ -10,9 +10,11 @@ interface InputFileProps {
     fileNames: TFileName[];
     index: number;
 }
+
 type TFileName = {
     name: string;
 };
+
 export function InputFile({ setFileNames, setComments, index, fileNames }: InputFileProps) {
     // handle file
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
@@ -39,16 +41,15 @@ export function InputFile({ setFileNames, setComments, index, fileNames }: Input
         }
     };
 
-    console.log('sdsd', index);
     return (
         <div className="flex max-w-xs items-center justify-end gap-1.5">
             <div className="flex gap-2">
                 <span className="ml-20 w-36 truncate text-xs text-green-500">{fileNames[index].name}</span>
-                <Label htmlFor="file">
+                <Label htmlFor={`file-${index}`}>
                     <Badge variant="outline">File</Badge>
                 </Label>
             </div>
-            <Input onChange={(e) => handleFileChange(e, index)} id="file" type="file" className="hidden" />
+            <Input onChange={(e) => handleFileChange(e, index)} id={`file-${index}`} type="file" className="hidden" />
         </div>
     );
 }

@@ -49,11 +49,17 @@ class CommentController extends Controller
 
         $userId = Auth::id();
 
+        $filePath = null;
+        if ($request->file('file_path') instanceof UploadedFile) {
+            // Upload the file and get the file path
+            $filePath = $this->uploadFile($request->file('file_path'), 'uploads/files');
+        }
+
         CommentReply::create([
             'user_id' => $userId,
             'task_comment_id' => $id,
             'content' => $request->content,
-            'file_path' => $request->filePath
+            'file_path' => $filePath
         ]);
 
         return back()->with('success', 'Reply added successfully');

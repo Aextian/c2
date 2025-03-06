@@ -4,6 +4,7 @@ import { IComment } from '@/types/tasks-types';
 import { useForm } from '@inertiajs/react';
 import axios from 'axios';
 import { useState } from 'react';
+import { FileReply } from './FileReply';
 import { Badge } from './ui/badge';
 
 interface CommentListProps {
@@ -12,19 +13,18 @@ interface CommentListProps {
     fetchCordinatorTasks: () => void;
 }
 export type TReply = {
-    content: string;
+    content?: string;
     file_path?: string | null | File;
 };
 
 const CommentList = ({ comment, sending, fetchCordinatorTasks }: CommentListProps) => {
     const [showReply, setShowReply] = useState(false);
     const [viewReply, setViewReply] = useState(false);
-    const { post, data, setData, clearErrors, reset } = useForm<TReply>({
+    const { post, data, setData, clearErrors, reset, processing } = useForm<TReply>({
         content: '',
         file_path: '',
     });
 
-    console.log('data', data);
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>, commentId?: number) => {
         e.preventDefault();
         const url = route('reply-comment.store', commentId);
@@ -65,7 +65,11 @@ const CommentList = ({ comment, sending, fetchCordinatorTasks }: CommentListProp
                     <span className="font-bold tracking-widest">{comment.user?.name}:</span> {comment.comment}
                 </p>
                 {comment.file_path && (
-                    <Badge className="mt-2 hover:cursor-pointer" variant={'outline'} onClick={() => handleDownload(comment.file_path as string)}>
+                    <Badge
+                        className="mt-2 text-[10px] hover:cursor-pointer"
+                        variant={'outline'}
+                        onClick={() => handleDownload(comment.file_path as string)}
+                    >
                         Download File
                     </Badge>
                 )}
@@ -73,9 +77,20 @@ const CommentList = ({ comment, sending, fetchCordinatorTasks }: CommentListProp
                     Reply
                 </button>
                 {replies?.map((reply) => (
-                    <p key={reply.id} className="mx-10 mt-4">
-                        <span className="font-bold tracking-widest">{reply.user?.name}</span>: {reply.content}
-                    </p>
+                    <div className="mx-10 mt-4" key={reply.id}>
+                        <p>
+                            <span className="font-bold tracking-widest">{reply.user?.name}</span>: {reply.content}
+                        </p>
+                        {reply.file_path && (
+                            <Badge
+                                className="mt-2 text-[10px] hover:cursor-pointer"
+                                variant={'outline'}
+                                onClick={() => handleDownload(reply.file_path as string)}
+                            >
+                                Download File
+                            </Badge>
+                        )}
+                    </div>
                 ))}
                 {comment.replies?.length !== undefined && comment.replies.length > 1 && !viewReply && (
                     <button className="ml-10 text-blue-500 hover:underline" onClick={() => setViewReply(true)}>
@@ -84,11 +99,15 @@ const CommentList = ({ comment, sending, fetchCordinatorTasks }: CommentListProp
                 )}
                 {showReply && (
                     <form className="mx-10 mt-5" onSubmit={(e) => handleSubmit(e, comment.id)}>
-                        <Textarea value={data.content} onChange={(e) => setData('content', e.target.value)} placeholder="Enter your reply..." />
+                        <Textarea
+                            value={data.content}
+                            onChange={(e) => setData((prevData) => ({ ...prevData, content: e.target.value }))}
+                            placeholder="Enter your reply..."
+                            required
+                        />
                         <div className="mt-5 flex flex-col justify-end gap-2">
-                            {/* <FileReply setData={setData} /> */}
-
-                            <Button className="self-end px-10" disabled={sending}>
+                            <FileReply setData={setData} commentId={comment?.id} />
+                            <Button className="self-end px-10" disabled={sending || processing}>
                                 Send
                             </Button>
                         </div>

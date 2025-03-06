@@ -25,7 +25,6 @@ class DashboardController extends Controller
                 'tasks' => $tasks
             ]);
         } else {
-
             return inertia('dashboard', [
                 'tasks' => Task::with('subTasks')->get(),
             ]);
