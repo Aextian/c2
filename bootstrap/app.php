@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\AttachPermissions;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\ShareNotifications;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -18,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
             AttachPermissions::class,
+            ShareNotifications::class
         ]);
         $middleware->validateCsrfTokens(except: [
             '/openai/generate-subtasks'

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\FileUpload;
 use App\Models\CommentReply;
 use App\Models\TaskComment;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
@@ -26,6 +27,10 @@ class CommentController extends Controller
                 // Upload the file and get the file path
                 $filePath = $this->uploadFile($request->file('filePath'), 'uploads/files');
             }
+
+            $content = 'commented on your task';
+
+            ((new NotificationService())->sendNotification($content, $request->subTaskId));
 
             $userId = Auth::id();
             TaskComment::create([
@@ -50,10 +55,16 @@ class CommentController extends Controller
         $userId = Auth::id();
 
         $filePath = null;
+
         if ($request->file('file_path') instanceof UploadedFile) {
             // Upload the file and get the file path
             $filePath = $this->uploadFile($request->file('file_path'), 'uploads/files');
         }
+        $content = 'replied on your comment';
+
+        $comment = TaskComment::find($id);
+
+        ((new NotificationService())->sendNotification($content, $comment->sub_task_id));
 
         CommentReply::create([
             'user_id' => $userId,

@@ -8,6 +8,7 @@ use App\Models\CordinatorTask;
 use App\Models\SubTask;
 use App\Models\Task;
 use App\Models\User;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -94,8 +95,20 @@ class TaskController extends Controller
                 if (!empty($cordinatorSubTasks)) {
                     CordinatorSubTask::insert($cordinatorSubTasks);
                 }
+
                 if (!empty($cordinatorSubTasks)) {
                     CordinatorTask::insert($cordinatorTasks);
+                }
+                // Now, fetch users related to the sub-task (since they exist in the database)
+
+                foreach ($options as $option) {
+                    $subTask = SubTask::where('task_id', $task->id)
+                        ->where('content', $option['subTask']) // Ensure the correct sub-task
+                        ->first();
+                    if ($subTask) {
+                        $content = 'assigned new task';
+                        ((new NotificationService())->sendNotification($content, $subTask->id));
+                    }
                 }
 
                 return redirect()->route('tasks.index')->with('success', 'Task created successfully');
