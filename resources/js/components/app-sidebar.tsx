@@ -3,7 +3,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { LayoutGrid, LucideThermometerSnowflake, Users } from 'lucide-react';
+import { BookmarkCheck, LayoutGrid, LucideThermometerSnowflake, ShieldAlert, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -23,13 +23,13 @@ const mainNavItems: NavItem[] = [
         title: 'Roles and Permissions',
         url: route('permissions.index'),
         activeUrl: ['/permissions', '/permissions/create'],
-        icon: Users,
+        icon: ShieldAlert,
     },
     {
-        title: 'Task',
+        title: 'Tasks',
         url: route('tasks.index'),
-        activeUrl: ['/tasks', '/tasks/create'],
-        icon: LucideThermometerSnowflake,
+        activeUrl: ['/tasks', '/tasks/create', '/tasks/edit'],
+        icon: BookmarkCheck,
     },
     {
         title: 'Task Assign',

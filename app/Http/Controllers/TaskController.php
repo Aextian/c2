@@ -20,6 +20,12 @@ class TaskController extends Controller
      */
     public function index()
     {
+        $user = auth()->user();
+        $allowed = $user->canAny(['task-edit', 'task-delete', 'task-create']);
+        if (!$allowed) {
+            return back()->with('error', 'You do not have permission to view tasks page.');
+        }
+
         return inertia('tasks/index', [
             'tasks' => Task::with('cordinatorTasks.user')->get(),
         ]);
@@ -30,6 +36,11 @@ class TaskController extends Controller
      */
     public function create()
     {
+        $user = auth()->user();
+        $notAllowed = $user->can('task-create');
+        if (!$notAllowed) {
+            return back()->with('error', 'You do not have permission to create tasks.');
+        }
         return inertia('tasks/create', [
             'users' => User::get(),
         ]);
@@ -142,7 +153,11 @@ class TaskController extends Controller
      */
     public function edit(string $id)
     {
-
+        $user = auth()->user();
+        $notAllowed = $user->can('task-edit');
+        if (!$notAllowed) {
+            return back()->with('error', 'You do not have permission to edit tasks.');
+        }
         return inertia('tasks/edit', [
             'task' => Task::with('subTasks.task', 'subTasks.cordinatorSubTasks')->find($id),
             'users' => User::get(),
@@ -244,6 +259,12 @@ class TaskController extends Controller
      */
     public function destroy(string $id)
     {
+        $user = auth()->user();
+        $notAllowed = $user->can('task-delete');
+        if (!$notAllowed) {
+            return back()->with('error', 'You do not have permission to edit tasks.');
+        }
+
         Task::find($id)->delete();
 
         return redirect()->route('tasks.index')->with('success', 'Task deleted successfully');

@@ -15,6 +15,12 @@ class UserController extends Controller
      */
     public function index()
     {
+        $user = auth()->user();
+        $allowed = $user->canAny(['user-edit', 'user-delete', 'user-create']);
+        if (!$allowed) {
+            return back()->with('error', 'You do not have permission to view users page.');
+        }
+
         return inertia('users/index', [
             'users' => User::with('roles')->whereNot('email', 'admin')->get(),
         ]);
@@ -25,6 +31,14 @@ class UserController extends Controller
      */
     public function create()
     {
+        $user = auth()->user();
+
+        $allowed = $user->can('user-create');
+        if (!$allowed) {
+            return back()->with('error', 'You do not have permission to create users.');
+        }
+
+
         return inertia('users/create', [
             'roles' => Role::get(),
         ]);
@@ -55,6 +69,12 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
+        $user = auth()->user();
+        $allowed = $user->can('user-edit');
+        if (!$allowed) {
+            return back()->with('error', 'You do not have permission to edit user.');
+        }
+
         return inertia('users/edit', [
             'user' => User::with('roles')->find($id),
             'roles' => Role::get(),
@@ -83,6 +103,11 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
+        $user = auth()->user();
+        $allowed = $user->can('user-delete');
+        if (!$allowed) {
+            return back()->with('error', 'You do not have permission to delete user.');
+        }
         User::find($id)->delete();
         return redirect()->route('users.index')->with('success', 'User deleted successfully');
     }

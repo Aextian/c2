@@ -16,16 +16,20 @@ class NotificationService
 
         $userIds = $subTask->cordinatorSubTasks()->pluck('user_id')->toArray();
 
-        $mainContent = auth()->user()->name . ' ' . $content;
 
-        $notifications = collect($userIds)->map(fn($userId) => [
-            'from_user_id' => Auth::id(),
-            'to_user_id' => $userId,
-            'content' => $mainContent,
-            'sub_task_id' => $subTaskId,
-            'created_at' => now(),
-            'updated_at' => now()
-        ])->toArray();
+        $authId = Auth::id();
+
+        $notifications = collect($userIds)
+            ->filter(fn($userId) => $userId !== $authId) // Skip if userId is the same as authId
+            ->map(fn($userId) => [
+                'from_user_id' => $authId,
+                'to_user_id' => $userId,
+                'content' => $content,
+                'sub_task_id' => $subTaskId,
+                'created_at' => now(),
+                'updated_at' => now()
+            ])
+            ->toArray();
 
         Notification::insert($notifications);
     }
@@ -34,7 +38,7 @@ class NotificationService
     {
         $userId = Auth::id();
 
-        $notifications = Notification::where('to_user_id', $userId)->orderBy('created_at', 'desc')->get();
+        $notifications = Notification::with('fromUser')->where('to_user_id', $userId)->latest()->take(6)->get();
 
         return $notifications;
     }

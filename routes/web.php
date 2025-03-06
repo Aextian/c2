@@ -38,6 +38,7 @@ Route::middleware('auth')->group(function () {
 
 
         Route::get('/cordinator-tasks/{id}', [UsersTaskController::class, 'getCordinatorTasks'])->name('users-tasks.cordinator-tasks');
+        Route::get('/cordinator-tasks', [UsersTaskController::class, 'getAllCordinatorTasks'])->name('user-tasks');
 
         Route::get('/view-task/{id}', [UsersTaskController::class, 'show'])->name('users-tasks.show');
 

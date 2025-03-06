@@ -27,12 +27,14 @@ const UsersTable = () => {
                                 </Badge>
                             ))}
                         </TableCell>
-                        <TableCell className="flex gap-2">
-                            <Button variant="default" size="sm" asChild>
-                                <Link href={route('users.edit', user.id)}>Edit</Link>
-                            </Button>
-                            <DeleteDialog url="users.destroy" id={user.id} />
-                        </TableCell>
+                        {user.email !== 'admin@example.com' && (
+                            <TableCell className="flex gap-2">
+                                <Button variant="default" size="sm" asChild>
+                                    <Link href={route('users.edit', user.id)}>Edit</Link>
+                                </Button>
+                                <DeleteDialog url="users.destroy" id={user.id} />
+                            </TableCell>
+                        )}
                     </TableRow>
                 ))}
             </TableBody>

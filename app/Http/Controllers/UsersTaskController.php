@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CordinatorSubTask;
 use App\Models\CordinatorTask;
+use App\Models\Notification;
 use App\Models\SubTask;
 use App\Models\Task;
 use App\Models\TaskComment;
@@ -15,6 +16,8 @@ class UsersTaskController extends Controller
 {
     public function index()
     {
+
+
         $userId = Auth::id();
         return inertia('users-tasks/index', [
             'cordinator_tasks' => CordinatorSubTask::query()
@@ -26,6 +29,11 @@ class UsersTaskController extends Controller
 
     public function show(string $id)
     {
+
+        $userId = Auth::id();
+
+        Notification::where('to_user_id', $userId)->where('sub_task_id', $id)->update(['is_read' => true]);
+
         return inertia('users-tasks/show', [
             'id' => $id
         ]);
@@ -91,6 +99,28 @@ class UsersTaskController extends Controller
         $user = auth()->user();
         $isCordinator = $user->can('coordinator-dashboard');
         $subtTaskIds = SubTask::where('task_id', $id)->pluck('id')->toArray();
+        if ($isCordinator) {
+            $cordinator_tasks = CordinatorSubTask::query()
+                ->whereIn('sub_task_id', $subtTaskIds)
+                ->where('user_id', $user->id)
+                ->with('subTask.task', 'subTask.comments.user', 'subTask.comments.replies.user')
+                ->get();
+        } else {
+            $cordinator_tasks = CordinatorSubTask::query()
+                ->whereIn('sub_task_id', $subtTaskIds)
+                ->with('subTask.task', 'subTask.comments.user', 'subTask.comments.replies.user')
+                ->get();
+        }
+
+        return response()->json($cordinator_tasks);
+    }
+
+    public function getAllCordinatorTasks()
+    {
+        $user = auth()->user();
+        $isCordinator = $user->can('coordinator-dashboard');
+        $subTaksIds = CordinatorSubTask::where('user_id', $user->id)->pluck('sub_task_id')->toArray();
+        $subtTaskIds = SubTask::whereIn('id', $subTaksIds)->pluck('id')->toArray();
         if ($isCordinator) {
             $cordinator_tasks = CordinatorSubTask::query()
                 ->whereIn('sub_task_id', $subtTaskIds)
