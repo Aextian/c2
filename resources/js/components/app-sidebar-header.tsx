@@ -3,8 +3,10 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 import { type BreadcrumbItem as BreadcrumbItemType } from '@/types';
 import { IUser } from '@/types/users-types';
 import { Link, usePage } from '@inertiajs/react';
+import axios from 'axios';
 import { BellDot } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 type TNotification = {
     id?: number;
@@ -17,7 +19,36 @@ type TNotification = {
 };
 export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: BreadcrumbItemType[] }) {
     const [showNotification, setShowNotification] = useState(false);
-    const { notifications } = usePage<{ notifications: TNotification[] }>().props;
+    const [notifications, setNotifications] = useState<TNotification[]>([]);
+    const { auth } = usePage().props;
+
+    const fetchNotifications = async () => {
+        try {
+            const response = await axios.get('/notifications');
+            setNotifications(response.data);
+        } catch (error) {
+            console.error('Error fetching notifications:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchNotifications();
+    }, []);
+
+    useEffect(() => {
+        const channel = window.Echo.private(`notification.${auth.user?.id}`);
+        channel.listen('.NotificationReceived', () => {
+            fetchNotifications();
+            toast.dark('You have a new notification');
+        });
+        return () => {
+            channel.stopListening('.NotificationReceived');
+        };
+    }, []);
+
+    const handleShowNotification = () => {
+        setShowNotification(!showNotification);
+    };
 
     return (
         <header className="border-sidebar-border/50 flex h-16 shrink-0 items-center gap-2 border-b px-6 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 md:px-4">
@@ -26,7 +57,7 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                     <SidebarTrigger className="-ml-1" />
                     <Breadcrumbs breadcrumbs={breadcrumbs} />
                 </div>
-                <button className="relative" onClick={() => setShowNotification(!showNotification)}>
+                <button className="relative" onClick={handleShowNotification}>
                     <BellDot className="text-muted-foreground" />
                     <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">
                         {notifications.filter((notification) => !notification.is_read).length}

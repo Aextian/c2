@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\NotificationReceived;
 use App\Models\CordinatorSubTask;
 use App\Models\Notification;
 use App\Models\SubTask;
@@ -16,6 +17,9 @@ class NotificationService
 
         $userIds = $subTask->cordinatorSubTasks()->pluck('user_id')->toArray();
 
+        foreach ($userIds as $userId) {
+            broadcast(new NotificationReceived(Auth::user(), $content, $userId));
+        }
 
         $authId = Auth::id();
 
@@ -38,8 +42,15 @@ class NotificationService
     {
         $userId = Auth::id();
 
-        $notifications = Notification::with('fromUser')->where('to_user_id', $userId)->latest()->take(6)->get();
+        $notifications = Notification::where('is_read', false)->with('fromUser')->where('to_user_id', $userId)->latest()->get();
 
+        return $notifications;
+    }
+
+    public function markAsRead(string $notificationId)
+    {
+        $userId = Auth::id();
+        $notifications = Notification::where('to_user_id', $userId)->update(['is_read' => true]);
         return $notifications;
     }
 }

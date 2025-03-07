@@ -3,6 +3,7 @@
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FileController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OpenAIController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\TaskController;
@@ -19,6 +20,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
+    Route::get('/notifications', NotificationController::class); // Route for generating sub-tasks
 
     Route::post('/openai/generate-subtasks', OpenAIController::class); // Route for generating sub-tasks
 
