@@ -34,7 +34,7 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Task Assign',
         url: route('users-tasks.index'),
-        activeUrl: ['/users-tasks', '/users-tasks/create'],
+        activeUrl: ['/users-tasks'],
         icon: LucideThermometerSnowflake,
     },
 ];

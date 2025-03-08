@@ -19,9 +19,6 @@ class CommentController extends Controller
     public function storeComment(Request $request)
     {
 
-
-
-
         $request->validate([
             'subTaskId' => 'required',
             'comment' => 'required',
@@ -45,6 +42,7 @@ class CommentController extends Controller
                 'comment' => $request->comment,
                 'file_path' => $filePath
             ]);
+
             return response()->json(['message' => 'Comment added successfully'], 200);
             // return redirect()->back()->with('success', 'Comment added successfully');
         } catch (\Throwable $th) {
@@ -71,6 +69,7 @@ class CommentController extends Controller
         $comment = TaskComment::find($id);
 
         ((new NotificationService())->sendNotification($content, $comment->sub_task_id));
+
 
         CommentReply::create([
             'user_id' => $userId,

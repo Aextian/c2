@@ -2,6 +2,8 @@
 
 namespace App\Events;
 
+use App\Models\Notification;
+use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -9,12 +11,13 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Auth;
 
 class NotificationReceived implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $message;
+    public $notification;
     public $userId;
     public $user;
 
@@ -22,10 +25,10 @@ class NotificationReceived implements ShouldBroadcast
     /**
      * Create a new event instance.
      */
-    public function __construct($user, $message, $userId)
+    public function __construct($user, Notification $notification, $userId)
     {
         $this->user  = $user;
-        $this->message = $message;
+        $this->notification = $notification;
         $this->userId = $userId;
     }
 

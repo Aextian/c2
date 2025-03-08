@@ -24,7 +24,7 @@ interface ITaskForm {
     content: string;
     options: TOption[];
     deadLine: string;
-    type: 'minor' | 'important' | 'urgent';
+    type: 'minor' | 'important' | 'urgent' | string;
     [key: string]: string | number | TOption[];
 }
 
@@ -46,7 +46,7 @@ const Create = ({ users }: IProps) => {
         title: '',
         content: '',
         deadLine: '',
-        type: 'minor',
+        type: '',
         options: [],
     });
 
@@ -130,8 +130,6 @@ const Create = ({ users }: IProps) => {
         label: user.name,
     }));
 
-    console.log('errors', errors);
-
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="tasks" />
@@ -168,6 +166,7 @@ const Create = ({ users }: IProps) => {
                                     onChange={handleChange}
                                     value={data.content}
                                     name="content"
+                                    required
                                     rows={4}
                                     placeholder="Type your message here."
                                 />

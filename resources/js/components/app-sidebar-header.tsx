@@ -3,7 +3,6 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 import { type BreadcrumbItem as BreadcrumbItemType } from '@/types';
 import { IUser } from '@/types/users-types';
 import { Link, usePage } from '@inertiajs/react';
-import axios from 'axios';
 import { BellDot } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -17,33 +16,22 @@ type TNotification = {
     from_user_id?: number;
     from_user: IUser;
 };
+type TPage = { auth: { user: IUser }; notifications: TNotification[] };
 export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: BreadcrumbItemType[] }) {
     const [showNotification, setShowNotification] = useState(false);
-    const [notifications, setNotifications] = useState<TNotification[]>([]);
-    const { auth } = usePage().props;
-
-    const fetchNotifications = async () => {
-        try {
-            const response = await axios.get('/notifications');
-            setNotifications(response.data);
-        } catch (error) {
-            console.error('Error fetching notifications:', error);
-        }
-    };
-
-    useEffect(() => {
-        fetchNotifications();
-    }, []);
+    const { auth, notifications } = usePage<TPage>().props;
+    const [newNotifications, setNewNotifications] = useState<TNotification[]>(notifications);
 
     useEffect(() => {
         const channel = window.Echo.private(`notification.${auth.user?.id}`);
-        channel.listen('.NotificationReceived', () => {
-            fetchNotifications();
+        channel.listen('.NotificationReceived', (e: { notification: TNotification }) => {
+            setNewNotifications((prevNotifications) => [...prevNotifications, e.notification]);
             toast.dark('You have a new notification');
         });
         return () => {
             channel.stopListening('.NotificationReceived');
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleShowNotification = () => {
@@ -60,16 +48,16 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                 <button className="relative" onClick={handleShowNotification}>
                     <BellDot className="text-muted-foreground" />
                     <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">
-                        {notifications.filter((notification) => !notification.is_read).length}
+                        {newNotifications.filter((notification) => !notification.is_read).length}
                     </span>
                     {showNotification && (
                         <div className="absolute top-4 right-6 z-10 min-w-64 rounded-tl-3xl rounded-br-3xl bg-white p-5 shadow-2xl">
                             <ul className="flex flex-col items-start justify-start">
-                                {notifications.map((notification) => (
+                                {newNotifications.map((notification) => (
                                     <Link
                                         className={`block cursor-pointer hover:text-gray-400 ${notification.is_read ? 'text-gray-400' : ''}`}
                                         key={notification.id}
-                                        href={route('users-tasks.show', notification.sub_task_id)}
+                                        href={route('users-task.show', notification.sub_task_id)}
                                     >
                                         <li className="whitespace-nowrap">
                                             <span className="text-xs -tracking-wide">
@@ -79,8 +67,8 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                                         </li>
                                     </Link>
                                 ))}
-                                {notifications.length === 0 && <li>No Notification</li>}
                             </ul>
+                            {newNotifications.length === 0 && <p className="text-center text-xs">No Notification</p>}
                         </div>
                     )}
                 </button>

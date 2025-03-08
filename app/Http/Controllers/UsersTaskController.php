@@ -39,6 +39,20 @@ class UsersTaskController extends Controller
         ]);
     }
 
+
+    public function showTaskInNotifications(string $id)
+    {
+
+        $userId = Auth::id();
+        Notification::where('to_user_id', $userId)->where('sub_task_id', $id)->update(['is_read' => true]);
+        $subTask = SubTask::with('cordinatorSubTasks')->find($id);
+        $task = Task::with('subTasks')->find($subTask->task_id);
+
+        return inertia('users-tasks/show', [
+            'id' => $task->id
+        ]);
+    }
+
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
@@ -98,21 +112,22 @@ class UsersTaskController extends Controller
     {
         $user = auth()->user();
         $isCordinator = $user->can('coordinator-dashboard');
-        $subtTaskIds = SubTask::where('task_id', $id)->pluck('id')->toArray();
+        $subTaskIds = SubTask::where('task_id', $id)->pluck('id')->toArray();
         if ($isCordinator) {
             $cordinator_tasks = CordinatorSubTask::query()
-                ->whereIn('sub_task_id', $subtTaskIds)
+                ->whereIn('sub_task_id', $subTaskIds)
                 ->where('user_id', $user->id)
                 ->with('subTask.task', 'subTask.comments.user', 'subTask.comments.replies.user')
                 ->get();
         } else {
             $cordinator_tasks = CordinatorSubTask::query()
-                ->whereIn('sub_task_id', $subtTaskIds)
+                ->whereIn('sub_task_id', $subTaskIds)
                 ->with('subTask.task', 'subTask.comments.user', 'subTask.comments.replies.user')
-                ->get();
+                ->get()
+                ->unique('sub_task_id'); // Remove duplicate sub_task_id
         }
 
-        return response()->json($cordinator_tasks);
+        return response()->json(array_values($cordinator_tasks->toArray()));
     }
 
     public function getAllCordinatorTasks()

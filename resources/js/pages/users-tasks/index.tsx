@@ -3,6 +3,7 @@ import { InputFile } from '@/components/InputFile';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
@@ -29,6 +30,7 @@ const Index = () => {
     ]);
     const [updating, setUpdating] = useState(false);
     const [sending, setSending] = useState(false);
+    const [isLoading, setLoading] = useState(true);
     const [cordinatorTasks, setCordinatorTasks] = useState<ICordinatorTask[]>([]);
 
     const [comments, setComments] = useState<IComment[]>([
@@ -54,12 +56,14 @@ const Index = () => {
     ];
 
     const fetchCordinatorTasks = async () => {
+        setLoading(true);
         const response = await axios.get(route('user-tasks'));
         const cordinatorTasks = response.data;
         setCordinatorTasks(response.data);
         setStatus(cordinatorTasks.map((task: ICordinatorTask) => ({ status: task.status }))); //get parent task status
         setComments(cordinatorTasks.map((task: ICordinatorTask) => ({ sub_task_id: Number(task.sub_task_id), comment: '' })));
         setFileNames(cordinatorTasks.map((task: ICordinatorTask) => ({ sub_task_id: Number(task.sub_task_id), name: '' })));
+        setLoading(false);
     };
 
     useEffect(() => {
@@ -219,12 +223,15 @@ const Index = () => {
                                 </div>
                             </div>
                         ))}
-                        {cordinatorTasks.length === 0 && (
-                            <div className="flex h-full items-center justify-center">
-                                <p className="text-2xl font-semibold text-gray-900 dark:text-white">No tasks</p>
-                            </div>
-                        )}
                     </div>
+                    {isLoading ? (
+                        <div className="grid h-full w-full grid-cols-2 gap-5">
+                            <Skeleton className="h-[600px] w-full rounded-xl" />
+                            <Skeleton className="h-[600px] w-full rounded-xl" />
+                        </div>
+                    ) : (
+                        cordinatorTasks.length === 0 && <p className="text-2xl font-semibold text-gray-900 dark:text-white">No tasks</p>
+                    )}
                 </div>
             </div>
         </AppLayout>

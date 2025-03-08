@@ -44,6 +44,8 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/view-task/{id}', [UsersTaskController::class, 'show'])->name('users-tasks.show');
 
+        Route::get('/show-task/{id}', [UsersTaskController::class, 'showTaskInNotifications'])->name('users-task.show');
+
         Route::post('/update-status/{id}', [UsersTaskController::class, 'updateStatus'])->name('users-tasks.update-status');
     });
 

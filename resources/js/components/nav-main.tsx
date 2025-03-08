@@ -9,14 +9,13 @@ type TPageProps = {
     permissions: string[];
 };
 export function NavMain({ items = [] }: { items: NavItem[] }) {
-    const { url, permissions } = usePage<TPageProps>().props;
+    const page = usePage<TPageProps>();
 
     const permissionMap: Record<string, string[]> = {
         Users: USER_PERMISSIONS,
         'Roles and Permissions': ROLE_PERMISSIONS,
         Tasks: TASK_PERMISSIONS,
     };
-
     return (
         <SidebarGroup className="px-2 py-0">
             <SidebarGroupLabel>Menu</SidebarGroupLabel>
@@ -27,11 +26,11 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                         (item) =>
                             item.title === 'Dashboard' ||
                             item.title === 'Task Assign' || // Always show Dashboard
-                            (permissionMap[item.title] && hasPermissions(permissions, permissionMap[item.title])),
+                            (permissionMap[item.title] && hasPermissions(page.props.permissions, permissionMap[item.title])),
                     )
                     .map((item) => (
                         <SidebarMenuItem key={item.title}>
-                            <SidebarMenuButton asChild isActive={item.activeUrl.includes(url)}>
+                            <SidebarMenuButton asChild isActive={item.activeUrl.includes(page.url)}>
                                 <Link href={item.url} prefetch>
                                     {item.icon && <item.icon />}
                                     <span>{item.title}</span>

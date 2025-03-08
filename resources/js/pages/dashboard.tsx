@@ -33,7 +33,7 @@ export default function Dashboard({ tasks }: { tasks: ITask[] }) {
                             {tasks
                                 .filter((task) => task.status === 'todo')
                                 .map((task) => (
-                                    <Link href={route('users-tasks.show', task.id)}>
+                                    <Link key={task.id} href={route('users-tasks.show', task.id)}>
                                         <li className="flex flex-col justify-between rounded-md bg-gray-100 p-2">
                                             <span className="truncate first-letter:uppercase">{task.title}</span>
                                         </li>

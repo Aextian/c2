@@ -131,11 +131,23 @@ const Show = ({ id }: { id: number }) => {
         }
     };
 
+    console.log('cordinatorsTask', cordinatorTasks);
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="tasks" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 rounded-xl border p-10 md:min-h-min">
+                    <div className="mx-auto my-5 flex h-64 w-96 flex-col gap-5 p-5 shadow-lg">
+                        <div className="flex w-full justify-between">
+                            <h1>Title: {cordinatorTasks[0]?.sub_task.task?.title}</h1>
+                            <h1>Due: {new Date(cordinatorTasks[0]?.sub_task.task?.dead_line || '').toDateString()}</h1>
+                        </div>
+                        <ul className="space-y-5">
+                            <li>Type: {cordinatorTasks[0]?.sub_task.task?.type}</li>
+                            <li>Content: {cordinatorTasks[0]?.sub_task.task?.content}</li>
+                        </ul>
+                    </div>
                     <div className="grid grid-cols-2 gap-5">
                         {cordinatorTasks.map((cordinator_task, index) => (
                             <div key={index} className="shadow-sidebar-border p-5 shadow-lg">
@@ -163,13 +175,13 @@ const Show = ({ id }: { id: number }) => {
                                         </Button>
                                     </form>
                                 </div>
-                                <div className="mb-10 flex gap-5">
+                                {/* <div className="mb-10 flex gap-5">
                                     <h2 className="font-bold">Title:</h2>
                                     <span className="font-semibold text-gray-900 first-letter:uppercase dark:text-white">
                                         {cordinator_task?.sub_task.task?.title}
                                     </span>
-                                </div>
-                                <div className="mb-10 flex gap-5">
+                                </div> */}
+                                <div className="mt-5 mb-10 flex gap-5">
                                     <h2 className="font-bold">Task:</h2>
                                     <span className="text-gray-900 dark:text-white">{cordinator_task.sub_task.content}</span>
                                 </div>
