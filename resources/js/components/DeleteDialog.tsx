@@ -57,7 +57,7 @@ const DeleteDialog = ({ url, id }: TProps) => {
                         </Button>
                     </AlertDialogCancel>
                     <form onSubmit={handleSubmit}>
-                        <Button disabled={processing} type="submit" variant="destructive" asChild>
+                        <Button className="w-full" disabled={processing} type="submit" variant="destructive" asChild>
                             <AlertDialogAction>Delete</AlertDialogAction>
                         </Button>
                     </form>

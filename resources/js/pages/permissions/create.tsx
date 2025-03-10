@@ -53,7 +53,7 @@ const Create = ({ user_permissions }: IProps) => {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="permissions" />
-            <form onSubmit={handleSubmit} className="mx-auto mt-5 grid w-8/12 gap-5">
+            <form onSubmit={handleSubmit} className="mx-auto mt-5 grid gap-5 md:w-8/12">
                 <Label className="flex flex-col gap-2">
                     <span>Name:</span>
                     <Input type="text" name="name" value={data.name} onChange={handleChange} className="input input-sm md:input-sm w-full max-w-xs" />

@@ -142,7 +142,7 @@ const Create = ({ users, task }: IProps) => {
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 rounded-xl border p-10 md:min-h-min">
                     <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-5">
-                        <div className="grid grid-cols-2 gap-5">
+                        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                             <div className="flex flex-col gap-5 border-r p-5">
                                 <div className="flex max-h-fit flex-1 flex-col gap-5 self-end">
                                     <Label>Dead line</Label>

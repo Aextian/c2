@@ -138,7 +138,7 @@ const Show = ({ id }: { id: number }) => {
             <Head title="tasks" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 rounded-xl border p-10 md:min-h-min">
-                    <div className="mx-auto my-5 flex min-h-64 min-w-96 flex-col gap-5 p-5 shadow-lg">
+                    <div className="mx-auto my-5 flex min-h-64 flex-col gap-5 p-5 shadow-lg md:min-w-96">
                         <div className="flex justify-end">
                             <h1>
                                 <span className="font-bold">Due: </span>
@@ -146,7 +146,7 @@ const Show = ({ id }: { id: number }) => {
                             </h1>
                         </div>
                         <h1>
-                            <span className="font-bold">Title:</span>
+                            <span className="font-bold">Title: </span>
                             {cordinatorTasks[0]?.sub_task.task?.title}
                         </h1>
 
@@ -163,7 +163,7 @@ const Show = ({ id }: { id: number }) => {
                             </li>
                         </ul>
                     </div>
-                    <div className="grid grid-cols-2 gap-5">
+                    <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                         {cordinatorTasks.map((cordinator_task, index) => (
                             <div key={index} className="shadow-sidebar-border p-5 shadow-lg">
                                 <div className="col-span-2 flex justify-end">
@@ -229,7 +229,7 @@ const Show = ({ id }: { id: number }) => {
                                                 placeholder="write your comment"
                                             />
                                         )}
-                                        <div className="mt-5 flex justify-end">
+                                        <div className="mt-5 flex justify-center md:justify-end">
                                             <div className="flex flex-col gap-2">
                                                 <InputFile
                                                     setComments={setComments}

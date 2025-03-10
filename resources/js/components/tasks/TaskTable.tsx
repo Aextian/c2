@@ -100,7 +100,6 @@ export function TaskTable() {
                                     Edit
                                 </Link>
                             </Button>
-
                             <DeleteDialog url="tasks.destroy" id={task.id} />
                         </TableCell>
                     </TableRow>

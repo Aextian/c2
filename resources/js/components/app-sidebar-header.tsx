@@ -45,13 +45,15 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                     <SidebarTrigger className="-ml-1" />
                     <Breadcrumbs breadcrumbs={breadcrumbs} />
                 </div>
+                {showNotification && <div className="fixed top-0 right-0 z-10 h-screen w-screen" onClick={() => setShowNotification(false)} />}
+
                 <button className="relative" onClick={handleShowNotification}>
                     <BellDot className="text-muted-foreground" />
                     <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">
                         {newNotifications.filter((notification) => !notification.is_read).length}
                     </span>
                     {showNotification && (
-                        <div className="absolute top-4 right-6 z-10 min-w-64 rounded-tl-3xl rounded-br-3xl bg-white p-5 shadow-2xl">
+                        <div className="absolute top-4 right-6 z-20 min-w-64 rounded-tl-3xl rounded-br-3xl bg-white p-5 shadow-2xl">
                             <ul className="flex flex-col items-start justify-start">
                                 {newNotifications.map((notification) => (
                                     <Link

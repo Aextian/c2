@@ -17,7 +17,7 @@ const Index = () => {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="permissions" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-                <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] w-6/12 flex-1 rounded-xl border p-10 md:min-h-min">
+                <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 rounded-xl border p-10 md:min-h-min md:w-6/12">
                     <div className="flex justify-end">
                         <Button variant="outline" asChild>
                             <Link href={route('permissions.create')}>Create</Link>
