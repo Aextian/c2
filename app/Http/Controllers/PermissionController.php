@@ -28,7 +28,7 @@ class PermissionController extends Controller
     public function create()
     {
         return inertia('permissions/create', [
-            'permissions' => Permission::get(),
+            'user_permissions' => Permission::get(),
         ]);
     }
 
@@ -58,7 +58,7 @@ class PermissionController extends Controller
             if ($user->can('role-edit')) {
                 return inertia('permissions/edit', [
                     'role' => Role::with('permissions')->find($id),
-                    'permissions' => Permission::get(),
+                    'user_permissions' => Permission::get(),
                 ]);
             }
             return back()->with('error', 'You do not have permission to edit this role.');

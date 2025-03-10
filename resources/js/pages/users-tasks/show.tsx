@@ -138,14 +138,29 @@ const Show = ({ id }: { id: number }) => {
             <Head title="tasks" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 rounded-xl border p-10 md:min-h-min">
-                    <div className="mx-auto my-5 flex h-64 w-96 flex-col gap-5 p-5 shadow-lg">
-                        <div className="flex w-full justify-between">
-                            <h1>Title: {cordinatorTasks[0]?.sub_task.task?.title}</h1>
-                            <h1>Due: {new Date(cordinatorTasks[0]?.sub_task.task?.dead_line || '').toDateString()}</h1>
+                    <div className="mx-auto my-5 flex min-h-64 min-w-96 flex-col gap-5 p-5 shadow-lg">
+                        <div className="flex justify-end">
+                            <h1>
+                                <span className="font-bold">Due: </span>
+                                {new Date(cordinatorTasks[0]?.sub_task.task?.dead_line || '').toDateString()}
+                            </h1>
                         </div>
+                        <h1>
+                            <span className="font-bold">Title:</span>
+                            {cordinatorTasks[0]?.sub_task.task?.title}
+                        </h1>
+
                         <ul className="space-y-5">
-                            <li>Type: {cordinatorTasks[0]?.sub_task.task?.type}</li>
-                            <li>Content: {cordinatorTasks[0]?.sub_task.task?.content}</li>
+                            <li>
+                                <span>Type: </span>
+                                <Button size={'sm'} variant="outline">
+                                    <span className="first-letter:uppercase">{cordinatorTasks[0]?.sub_task.task?.type}</span>
+                                </Button>
+                            </li>
+                            <li>
+                                <span className="font-bold">Content: </span>
+                                <span className="text-xs">{cordinatorTasks[0]?.sub_task.task?.content}</span>
+                            </li>
                         </ul>
                     </div>
                     <div className="grid grid-cols-2 gap-5">

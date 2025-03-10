@@ -17,11 +17,11 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 interface IProps {
-    permissions: TPermission[];
+    user_permissions: TPermission[];
     role: IRole;
 }
 
-const Create = ({ role, permissions }: IProps) => {
+const Create = ({ role, user_permissions }: IProps) => {
     const { put, setData, data, processing, errors } = useForm<TPermission>({
         name: role.name,
         permissions: role?.permissions?.map((permission) => permission.name) ?? [],
@@ -49,7 +49,7 @@ const Create = ({ role, permissions }: IProps) => {
         }));
     };
 
-    const groupedPermissions = usePermissions(permissions);
+    const groupedPermissions = usePermissions(user_permissions);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

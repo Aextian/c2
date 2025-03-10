@@ -41,7 +41,14 @@ export function TaskTable() {
                             </Badge>
                         </TableCell>
                         <TableCell>
-                            <Progress value={task.percentage} className="w-[60%]" />
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Progress value={task.progress} className="w-[60%]" />
+                                    </TooltipTrigger>
+                                    <TooltipContent>{task.progress}%</TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
                         </TableCell>
                         <TableCell>
                             <Badge variant="outline"> {new Date(task.dead_line || '').toDateString()}</Badge>
@@ -76,11 +83,24 @@ export function TaskTable() {
                         </TableCell>
                         <TableCell className="flex gap-2">
                             <Button variant="outline" size="sm" asChild>
-                                <Link href={route('tasks.show', task.id)}>View</Link>
+                                <Link href={route('users-tasks.show', task.id)}>View</Link>
                             </Button>
-                            <Button variant="default" size="sm" asChild>
-                                <Link href={route('tasks.edit', task.id)}>Edit</Link>
+                            <Button
+                                variant="default"
+                                size="sm"
+                                asChild
+                                disabled={task.status === 'done'}
+                                className={`${task.status === 'done' ? 'pointer-events-none text-gray-400' : ''}`}
+                            >
+                                <Link
+                                    href={route('tasks.edit', task.id)}
+                                    onClick={(e) => task.status === 'done' && e.preventDefault()} // Prevent click if disabled
+                                    className={task.status === 'done' ? 'pointer-events-none text-gray-400' : ''}
+                                >
+                                    Edit
+                                </Link>
                             </Button>
+
                             <DeleteDialog url="tasks.destroy" id={task.id} />
                         </TableCell>
                     </TableRow>
