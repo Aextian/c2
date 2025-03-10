@@ -188,12 +188,15 @@ class TaskController extends Controller
                     'dead_line' => $request->input('deadLine'),
                 ]);
 
+                // get the percentage each subtask
                 $percentage =  100 / count($options);
 
+
                 CordinatorTask::where('task_id', $id)->delete(); // Delete previous cordinator tasks
+
                 foreach ($options as $option) {
 
-                    $subTask = SubTask::with('cordinatorSubTasks')->firstOrCreate(
+                    $subTask = SubTask::with('cordinatorSubTasks')->updateOrCreate(
                         [
                             'id' => $option['id'] ?? null,
                         ],
@@ -203,6 +206,7 @@ class TaskController extends Controller
                             'percentage' => $percentage
                         ]
                     );
+
 
                     $subTaskIds[] = $subTask->id;
                     $subPercentage =   $percentage / count($option['userIds']);

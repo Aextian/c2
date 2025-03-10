@@ -5,51 +5,37 @@ import { ChangeEvent, Dispatch } from 'react';
 import { Badge } from './ui/badge';
 
 interface InputFileProps {
-    setComments: Dispatch<React.SetStateAction<IComment[]>>;
-    setFileNames: Dispatch<React.SetStateAction<TFileName[]>>;
-    fileNames: TFileName[];
-    index: number;
+    setData: Dispatch<React.SetStateAction<{ comment: string; file_path: string | FileList | null | File }>>;
+    setFileName: Dispatch<React.SetStateAction<string>>;
+    fileName: string;
+    fileRef: React.RefObject<HTMLInputElement | null>;
 }
 
-type TFileName = {
-    name: string;
-};
-
-export function InputFile({ setFileNames, setComments, index, fileNames }: InputFileProps) {
+export function InputFile({ setData, setFileName, fileName, fileRef }: InputFileProps) {
     // handle file
-    const handleFileChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
+
+    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { files } = e.target;
-
         if (files && files.length > 0) {
-            setFileNames((prevFileNames) => {
-                const updatedFileNames = [...prevFileNames];
-                updatedFileNames[index] = {
-                    ...updatedFileNames[index],
-                    name: files ? files[0].name : '',
-                };
-                return updatedFileNames;
-            });
-
-            setComments((prevComments) => {
-                const updatedComments = [...prevComments];
-                updatedComments[index] = {
-                    ...updatedComments[index],
-                    file_path: files[0], // Store file name instead of value
-                };
-                return updatedComments;
-            });
+            setFileName(files ? files[0].name : '');
+            setData((prevValues: IComment) => ({
+                ...prevValues,
+                file_path: files[0],
+            }));
         }
     };
 
     return (
         <div className="flex max-w-xs items-center justify-end gap-1.5">
             <div className="flex gap-2">
-                <span className="ml-20 w-36 truncate text-xs text-green-500">{fileNames[index].name}</span>
-                <Label htmlFor={`file-${index}`}>
-                    <Badge variant="outline">File</Badge>
+                <span className="ml-20 w-36 truncate text-xs text-green-500">{fileName}</span>
+                <Label>
+                    <Badge onClick={() => fileRef.current?.click()} variant="outline">
+                        File
+                    </Badge>
                 </Label>
             </div>
-            <Input onChange={(e) => handleFileChange(e, index)} id={`file-${index}`} type="file" className="hidden" />
+            <Input ref={fileRef} onChange={(e) => handleFileChange(e)} type="file" className="hidden" />
         </div>
     );
 }

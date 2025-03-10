@@ -32,6 +32,7 @@ export interface ICordinatorTask {
     sub_task: ISubTask;
     user?: IUser;
     created_at?: string;
+    done_tasks_count?: number;
 }
 
 export interface ICordinatorSubTask {

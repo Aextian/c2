@@ -24,6 +24,26 @@ class CordinatorSubTask extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function coordinatorDoneTasks(): int
+    {
+        if (!$this->sub_task_id) {
+            return 0;
+        }
+        return SubTask::whereHas('cordinatorSubTasks', function ($query) {
+            $query->where('sub_task_id', $this->sub_task_id)
+                ->where('status', 'done');
+        })->count();
+    }
+
+    protected $appends = ['done_tasks_count'];
+
+    public function getDoneTasksCountAttribute()
+    {
+        return $this->coordinatorDoneTasks();
+    }
+
+
+
     public function subTask(): BelongsTo
     {
         return $this->belongsTo(SubTask::class);

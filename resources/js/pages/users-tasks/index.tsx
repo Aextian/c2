@@ -1,54 +1,15 @@
-import CommentList from '@/components/CommentList';
-import { InputFile } from '@/components/InputFile';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
+import AssignTask from '@/components/AssignedTask';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
-import { IComment, ICordinatorTask } from '@/types/tasks-types';
+import { ICordinatorTask } from '@/types/tasks-types';
 import { Head } from '@inertiajs/react';
 import axios from 'axios';
-import { ChevronDown, ChevronUp } from 'lucide-react';
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-
-interface IStatus {
-    status: string;
-}
-
-type TFileName = {
-    sub_task_id?: number | null;
-    name: string;
-};
+import { useEffect, useState } from 'react';
 
 const Index = () => {
-    const [status, setStatus] = useState<IStatus[]>([
-        {
-            status: '',
-        },
-    ]);
-    const [updating, setUpdating] = useState(false);
-    const [sending, setSending] = useState(false);
     const [isLoading, setLoading] = useState(true);
-    const [showComment, setShowComment] = useState(false);
     const [cordinatorTasks, setCordinatorTasks] = useState<ICordinatorTask[]>([]);
-
-    const [comments, setComments] = useState<IComment[]>([
-        {
-            sub_task_id: null,
-            comment: '',
-            file_path: '',
-        },
-    ]);
-
-    const [fileNames, setFileNames] = useState<TFileName[]>([
-        {
-            sub_task_id: null,
-            name: '',
-        },
-    ]);
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -61,10 +22,7 @@ const Index = () => {
         setLoading(true);
         const response = await axios.get(route('user-tasks'));
         const cordinatorTasks = response.data;
-        setCordinatorTasks(response.data);
-        setStatus(cordinatorTasks.map((task: ICordinatorTask) => ({ status: task.status }))); //get parent task status
-        setComments(cordinatorTasks.map((task: ICordinatorTask) => ({ sub_task_id: Number(task.sub_task_id), comment: '' })));
-        setFileNames(cordinatorTasks.map((task: ICordinatorTask) => ({ sub_task_id: Number(task.sub_task_id), name: '' })));
+        setCordinatorTasks(cordinatorTasks);
         setLoading(false);
     };
 
@@ -73,166 +31,14 @@ const Index = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>, index: number) => {
-        e.preventDefault();
-        setSending(true);
-
-        try {
-            const data = {
-                subTaskId: comments[index].sub_task_id,
-                comment: comments[index].comment,
-                filePath: comments[index].file_path,
-            };
-
-            const response = await axios.post(route('users-tasks.comment'), data, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-            fetchCordinatorTasks(); // fetch cordinator tasks again
-
-            // clear input comment
-            if (response.status === 200) {
-                setComments((prevComments) => {
-                    const updatedComments = [...prevComments];
-                    updatedComments[index] = { ...updatedComments[index], comment: '' };
-                    return updatedComments;
-                });
-            }
-            setSending(false);
-        } catch (error) {
-            console.log(error);
-            toast.error('Something went wrong');
-            setSending(false);
-        }
-    };
-
-    // handle comment
-    const handleCommentChange = (e: ChangeEvent<HTMLTextAreaElement>, index: number) => {
-        const { value } = e.target;
-        setComments((prevComments) => {
-            const updatedComments = [...prevComments];
-            updatedComments[index] = { ...updatedComments[index], comment: value };
-            return updatedComments;
-        });
-    };
-
-    const handleUpdateStatus = async (e: FormEvent<HTMLFormElement>, index: number, cordinatorTaskId: number) => {
-        e.preventDefault();
-        setUpdating(true);
-
-        try {
-            const updatedStatus = status[index].status;
-            const url = route('users-tasks.update-status', { id: cordinatorTaskId });
-            const response = await axios.post(url, { status: updatedStatus });
-            if (response.status === 200) {
-                toast.success(response.data.message);
-                fetchCordinatorTasks();
-                setUpdating(false);
-            }
-        } catch (error) {
-            console.log(error);
-            setUpdating(false);
-            toast.error('Something went wrong');
-        }
-    };
-
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="tasks" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 rounded-xl border md:min-h-min md:p-10">
                     <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-                        {cordinatorTasks.map((cordinator_task, index) => (
-                            <div key={index} className="shadow-sidebar-border p-5 shadow-lg">
-                                <div className="col-span-2 flex justify-end">
-                                    <form onSubmit={(e) => handleUpdateStatus(e, index, Number(cordinator_task.id))} className="flex flex-col gap-5">
-                                        <Label>Status</Label>
-                                        <Select
-                                            value={status[index].status}
-                                            onValueChange={(value) => setStatus(status.map((item, i) => (i === index ? { status: value } : item)))}
-                                        >
-                                            <SelectTrigger className="w-[180px]">
-                                                <SelectValue placeholder="Select a fruit" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectGroup>
-                                                    <SelectLabel>Status</SelectLabel>
-                                                    <SelectItem value="todo">Todo</SelectItem>
-                                                    <SelectItem value="doing">Doing</SelectItem>
-                                                    <SelectItem value="done">Done</SelectItem>
-                                                </SelectGroup>
-                                            </SelectContent>
-                                        </Select>
-                                        <Button disabled={updating} type="submit" className="w-[180px]">
-                                            {updating ? 'Updating...' : 'Update'}
-                                        </Button>
-                                    </form>
-                                </div>
-                                <div className="mt-5 mb-10 flex gap-5">
-                                    <h2 className="font-bold">Title:</h2>
-                                    <span className="font-semibold text-gray-900 first-letter:uppercase dark:text-white">
-                                        {cordinator_task?.sub_task.task?.title}
-                                    </span>
-                                </div>
-                                <div className="mb-10 flex gap-5">
-                                    <h2 className="font-bold">Task:</h2>
-                                    <span className="text-gray-900 dark:text-white">{cordinator_task.sub_task.content}</span>
-                                </div>
-
-                                {/* comment section */}
-                                <div className="border-t">
-                                    <div
-                                        className="my-5 flex items-center gap-2 font-bold hover:cursor-pointer"
-                                        onClick={() => setShowComment(!showComment)}
-                                    >
-                                        <p>Comments</p>
-                                        <span>{showComment ? <ChevronDown /> : <ChevronUp />}</span>
-                                    </div>
-                                    {showComment && (
-                                        <ul className="my-5 flex flex-col gap-2 text-xs">
-                                            <li>
-                                                {Array.isArray(cordinator_task?.sub_task?.comments) &&
-                                                cordinator_task.sub_task.comments.length > 0 ? (
-                                                    cordinator_task.sub_task.comments.map((comment: IComment) => (
-                                                        <CommentList
-                                                            key={comment.id}
-                                                            comment={comment}
-                                                            sending={sending}
-                                                            fetchCordinatorTasks={fetchCordinatorTasks}
-                                                        />
-                                                    ))
-                                                ) : (
-                                                    <p className="text-gray-500">No comments .</p>
-                                                )}
-                                            </li>
-                                        </ul>
-                                    )}
-                                    <form onSubmit={(e) => handleSubmit(e, index)}>
-                                        {comments[index] && comments[index].sub_task_id && (
-                                            <Textarea
-                                                required
-                                                value={comments[index].comment || ''}
-                                                onChange={(e) => handleCommentChange(e, index)}
-                                                placeholder="write your comment"
-                                            />
-                                        )}
-                                        <div className="mt-5 flex justify-end">
-                                            <div className="flex flex-col gap-2">
-                                                <InputFile
-                                                    setComments={setComments}
-                                                    setFileNames={setFileNames}
-                                                    fileNames={fileNames}
-                                                    index={index}
-                                                />
-                                                <Button className="px-10" disabled={sending}>
-                                                    Send
-                                                </Button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
+                        {cordinatorTasks.map((cordinator_task) => (
+                            <AssignTask key={cordinator_task.id} cordinator_task={cordinator_task} fetchCordinatorTasks={fetchCordinatorTasks} />
                         ))}
                     </div>
                     {isLoading ? (

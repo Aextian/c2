@@ -3,7 +3,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { IComment } from '@/types/tasks-types';
 import { useForm } from '@inertiajs/react';
 import axios from 'axios';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { FileReply } from './FileReply';
 import { Badge } from './ui/badge';
 
@@ -20,6 +20,9 @@ export type TReply = {
 const CommentList = ({ comment, sending, fetchCordinatorTasks }: CommentListProps) => {
     const [showReply, setShowReply] = useState(false);
     const [viewReply, setViewReply] = useState(false);
+    const [fileName, setFileName] = useState('');
+
+    const fileRef = useRef<HTMLInputElement | null>(null);
     const { post, data, setData, clearErrors, reset, processing } = useForm<TReply>({
         content: '',
         file_path: '',
@@ -35,6 +38,10 @@ const CommentList = ({ comment, sending, fetchCordinatorTasks }: CommentListProp
                 fetchCordinatorTasks();
                 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
                 reset(), clearErrors();
+                if (fileRef.current) {
+                    fileRef.current.value = '';
+                    setFileName('');
+                }
             },
             onError: (error) => {
                 console.log(error);
@@ -106,7 +113,7 @@ const CommentList = ({ comment, sending, fetchCordinatorTasks }: CommentListProp
                             required
                         />
                         <div className="mt-5 flex flex-col justify-end gap-2">
-                            <FileReply setData={setData} commentId={comment?.id} />
+                            <FileReply fileRef={fileRef} setData={setData} setFileName={setFileName} fileName={fileName} />
                             <Button className="self-end px-10" disabled={sending || processing}>
                                 Send
                             </Button>

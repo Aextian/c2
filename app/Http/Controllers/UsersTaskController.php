@@ -17,8 +17,8 @@ class UsersTaskController extends Controller
     public function index()
     {
 
-
         $userId = Auth::id();
+
         return inertia('users-tasks/index', [
             'cordinator_tasks' => CordinatorSubTask::query()
                 ->where('user_id', $userId)
@@ -81,6 +81,7 @@ class UsersTaskController extends Controller
                 })
                 ->exists();
 
+            // update task status
             if ($taskDoing || $taskExists) {
                 $task->update(['status' => 'doing']);
             } else {
@@ -145,6 +146,7 @@ class UsersTaskController extends Controller
         } else {
             $cordinator_tasks = CordinatorSubTask::query()
                 ->whereIn('sub_task_id', $subtTaskIds)
+                ->where('user_id', $user->id)
                 ->with('subTask.task', 'subTask.comments.user', 'subTask.comments.replies.user')
                 ->get();
         }
