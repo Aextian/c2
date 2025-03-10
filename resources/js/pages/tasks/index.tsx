@@ -19,7 +19,7 @@ const Index = () => {
                 <Button className="self-end" variant="outline" asChild>
                     <Link href={route('tasks.create')}>Create Task</Link>
                 </Button>
-                <div className="border-sidebar-border/70 dark:border-sidebar-border bmd:min-h-min relative min-h-[100vh] flex-1 rounded-xl border">
+                <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 rounded-xl border md:min-h-min">
                     <div className="max-w-86 overflow-auto md:w-full">
                         <TaskTable />
                     </div>

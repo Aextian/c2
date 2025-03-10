@@ -1,5 +1,6 @@
 import CommentList from '@/components/CommentList';
 import { InputFile } from '@/components/InputFile';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -9,6 +10,7 @@ import { BreadcrumbItem } from '@/types';
 import { IComment, ICordinatorTask } from '@/types/tasks-types';
 import { Head } from '@inertiajs/react';
 import axios from 'axios';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
@@ -30,6 +32,11 @@ const Show = ({ id }: { id: number }) => {
     const [updating, setUpdating] = useState(false);
     const [sending, setSending] = useState(false);
     const [cordinatorTasks, setCordinatorTasks] = useState<ICordinatorTask[]>([]);
+    const [showComment, setShowComment] = useState(false);
+
+    const title = cordinatorTasks[0]?.sub_task.task?.type;
+    const content = cordinatorTasks[0]?.sub_task.task?.content;
+    const due = cordinatorTasks[0]?.sub_task.task?.dead_line;
 
     const [comments, setComments] = useState<IComment[]>([
         {
@@ -48,7 +55,7 @@ const Show = ({ id }: { id: number }) => {
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
-            title: 'Tasks',
+            title: 'My Task',
             href: '/tasks',
         },
     ];
@@ -131,16 +138,14 @@ const Show = ({ id }: { id: number }) => {
         }
     };
 
-    console.log('cordinatorsTask', cordinatorTasks);
-
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="tasks" />
-            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl md:p-4">
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 rounded-xl border p-10 md:min-h-min">
                     <div className="mx-auto my-5 flex min-h-64 flex-col gap-5 p-5 shadow-lg md:min-w-96">
                         <div className="flex justify-end">
-                            <h1>
+                            <h1 className="text-xs md:text-xs">
                                 <span className="font-bold">Due: </span>
                                 {new Date(cordinatorTasks[0]?.sub_task.task?.dead_line || '').toDateString()}
                             </h1>
@@ -153,27 +158,34 @@ const Show = ({ id }: { id: number }) => {
                         <ul className="space-y-5">
                             <li>
                                 <span>Type: </span>
-                                <Button size={'sm'} variant="outline">
+                                <Badge variant={title === 'important' ? 'warning' : title === 'urgent' ? 'destructive' : 'default'}>
                                     <span className="first-letter:uppercase">{cordinatorTasks[0]?.sub_task.task?.type}</span>
-                                </Button>
+                                </Badge>
                             </li>
                             <li>
                                 <span className="font-bold">Content: </span>
-                                <span className="text-xs">{cordinatorTasks[0]?.sub_task.task?.content}</span>
+                                <p className="text-xs">{cordinatorTasks[0]?.sub_task.task?.content}</p>
                             </li>
                         </ul>
                     </div>
                     <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                         {cordinatorTasks.map((cordinator_task, index) => (
                             <div key={index} className="shadow-sidebar-border p-5 shadow-lg">
+                                <span className="text-xs">
+                                    Created:
+                                    {new Date(cordinator_task.created_at || '').toDateString()}
+                                </span>
                                 <div className="col-span-2 flex justify-end">
-                                    <form onSubmit={(e) => handleUpdateStatus(e, index, Number(cordinator_task.id))} className="flex flex-col gap-5">
+                                    <form
+                                        onSubmit={(e) => handleUpdateStatus(e, index, Number(cordinator_task.id))}
+                                        className="flex flex-col items-end justify-end gap-5"
+                                    >
                                         <Label>Status</Label>
                                         <Select
                                             value={status[index].status}
                                             onValueChange={(value) => setStatus(status.map((item, i) => (i === index ? { status: value } : item)))}
                                         >
-                                            <SelectTrigger className="w-[180px]">
+                                            <SelectTrigger className="w-[100px] md:w-[180px]">
                                                 <SelectValue placeholder="Select a fruit" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -185,7 +197,7 @@ const Show = ({ id }: { id: number }) => {
                                                 </SelectGroup>
                                             </SelectContent>
                                         </Select>
-                                        <Button disabled={updating} type="submit" className="w-[180px]">
+                                        <Button disabled={updating} type="submit" className="w-[100px] md:w-[180px]">
                                             {updating ? 'Updating...' : 'Update'}
                                         </Button>
                                     </form>
@@ -203,23 +215,32 @@ const Show = ({ id }: { id: number }) => {
 
                                 {/* comment section */}
                                 <div className="">
-                                    <ul className="my-5 flex flex-col gap-2 text-xs">
-                                        <li>
-                                            {Array.isArray(cordinator_task?.sub_task?.comments) && cordinator_task.sub_task.comments.length > 0 ? (
-                                                cordinator_task.sub_task.comments.map((comment: IComment) => (
-                                                    <CommentList
-                                                        key={comment.id}
-                                                        comment={comment}
-                                                        sending={sending}
-                                                        fetchCordinatorTasks={fetchCordinatorTasks}
-                                                    />
-                                                ))
-                                            ) : (
-                                                <p className="text-gray-500">No comments .</p>
-                                            )}
-                                        </li>
-                                    </ul>
-
+                                    <div
+                                        className="my-5 flex items-center gap-2 font-bold hover:cursor-pointer"
+                                        onClick={() => setShowComment(!showComment)}
+                                    >
+                                        <p>Comments</p>
+                                        <span>{showComment ? <ChevronDown /> : <ChevronUp />}</span>
+                                    </div>
+                                    {showComment && (
+                                        <ul className="my-5 flex flex-col gap-2 text-xs">
+                                            <li>
+                                                {Array.isArray(cordinator_task?.sub_task?.comments) &&
+                                                cordinator_task.sub_task.comments.length > 0 ? (
+                                                    cordinator_task.sub_task.comments.map((comment: IComment) => (
+                                                        <CommentList
+                                                            key={comment.id}
+                                                            comment={comment}
+                                                            sending={sending}
+                                                            fetchCordinatorTasks={fetchCordinatorTasks}
+                                                        />
+                                                    ))
+                                                ) : (
+                                                    <p className="text-gray-500">No comments .</p>
+                                                )}
+                                            </li>
+                                        </ul>
+                                    )}
                                     <form onSubmit={(e) => handleSubmit(e, index)}>
                                         {comments[index] && comments[index].sub_task_id && (
                                             <Textarea

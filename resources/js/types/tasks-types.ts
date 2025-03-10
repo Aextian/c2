@@ -31,6 +31,7 @@ export interface ICordinatorTask {
     status: string;
     sub_task: ISubTask;
     user?: IUser;
+    created_at?: string;
 }
 
 export interface ICordinatorSubTask {

@@ -10,6 +10,7 @@ import { BreadcrumbItem } from '@/types';
 import { IComment, ICordinatorTask } from '@/types/tasks-types';
 import { Head } from '@inertiajs/react';
 import axios from 'axios';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
@@ -31,6 +32,7 @@ const Index = () => {
     const [updating, setUpdating] = useState(false);
     const [sending, setSending] = useState(false);
     const [isLoading, setLoading] = useState(true);
+    const [showComment, setShowComment] = useState(false);
     const [cordinatorTasks, setCordinatorTasks] = useState<ICordinatorTask[]>([]);
 
     const [comments, setComments] = useState<IComment[]>([
@@ -139,8 +141,8 @@ const Index = () => {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="tasks" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-                <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 rounded-xl border p-10 md:min-h-min">
-                    <div className="grid grid-cols-2 gap-5">
+                <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 rounded-xl border md:min-h-min md:p-10">
+                    <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                         {cordinatorTasks.map((cordinator_task, index) => (
                             <div key={index} className="shadow-sidebar-border p-5 shadow-lg">
                                 <div className="col-span-2 flex justify-end">
@@ -167,7 +169,7 @@ const Index = () => {
                                         </Button>
                                     </form>
                                 </div>
-                                <div className="mb-10 flex gap-5">
+                                <div className="mt-5 mb-10 flex gap-5">
                                     <h2 className="font-bold">Title:</h2>
                                     <span className="font-semibold text-gray-900 first-letter:uppercase dark:text-white">
                                         {cordinator_task?.sub_task.task?.title}
@@ -179,24 +181,33 @@ const Index = () => {
                                 </div>
 
                                 {/* comment section */}
-                                <div className="">
-                                    <ul className="my-5 flex flex-col gap-2 text-xs">
-                                        <li>
-                                            {Array.isArray(cordinator_task?.sub_task?.comments) && cordinator_task.sub_task.comments.length > 0 ? (
-                                                cordinator_task.sub_task.comments.map((comment: IComment) => (
-                                                    <CommentList
-                                                        key={comment.id}
-                                                        comment={comment}
-                                                        sending={sending}
-                                                        fetchCordinatorTasks={fetchCordinatorTasks}
-                                                    />
-                                                ))
-                                            ) : (
-                                                <p className="text-gray-500">No comments .</p>
-                                            )}
-                                        </li>
-                                    </ul>
-
+                                <div className="border-t">
+                                    <div
+                                        className="my-5 flex items-center gap-2 font-bold hover:cursor-pointer"
+                                        onClick={() => setShowComment(!showComment)}
+                                    >
+                                        <p>Comments</p>
+                                        <span>{showComment ? <ChevronDown /> : <ChevronUp />}</span>
+                                    </div>
+                                    {showComment && (
+                                        <ul className="my-5 flex flex-col gap-2 text-xs">
+                                            <li>
+                                                {Array.isArray(cordinator_task?.sub_task?.comments) &&
+                                                cordinator_task.sub_task.comments.length > 0 ? (
+                                                    cordinator_task.sub_task.comments.map((comment: IComment) => (
+                                                        <CommentList
+                                                            key={comment.id}
+                                                            comment={comment}
+                                                            sending={sending}
+                                                            fetchCordinatorTasks={fetchCordinatorTasks}
+                                                        />
+                                                    ))
+                                                ) : (
+                                                    <p className="text-gray-500">No comments .</p>
+                                                )}
+                                            </li>
+                                        </ul>
+                                    )}
                                     <form onSubmit={(e) => handleSubmit(e, index)}>
                                         {comments[index] && comments[index].sub_task_id && (
                                             <Textarea
@@ -225,7 +236,7 @@ const Index = () => {
                         ))}
                     </div>
                     {isLoading ? (
-                        <div className="grid h-full w-full grid-cols-2 gap-5">
+                        <div className="grid h-full w-full grid-cols-1 gap-5 md:grid-cols-2">
                             <Skeleton className="h-[600px] w-full rounded-xl" />
                             <Skeleton className="h-[600px] w-full rounded-xl" />
                         </div>
