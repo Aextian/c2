@@ -125,6 +125,16 @@ importers:
       vite:
         specifier: ^6.0
         version: 6.2.0(jiti@2.4.2)(lightningcss@1.29.1)
+    optionalDependencies:
+      '@rollup/rollup-linux-x64-gnu':
+        specifier: 4.9.5
+        version: 4.9.5
+      '@tailwindcss/oxide-linux-x64-gnu':
+        specifier: ^4.0.1
+        version: 4.0.9
+      lightningcss-linux-x64-gnu:
+        specifier: ^1.29.1
+        version: 1.29.1
     devDependencies:
       '@eslint/js':
         specifier: ^9.19.0
@@ -159,16 +169,6 @@ importers:
       typescript-eslint:
         specifier: ^8.23.0
         version: 8.25.0(eslint@9.21.0(jiti@2.4.2))(typescript@5.7.3)
-    optionalDependencies:
-      '@rollup/rollup-linux-x64-gnu':
-        specifier: 4.9.5
-        version: 4.9.5
-      '@tailwindcss/oxide-linux-x64-gnu':
-        specifier: ^4.0.1
-        version: 4.0.9
-      lightningcss-linux-x64-gnu:
-        specifier: ^1.29.1
-        version: 1.29.1
 
 packages:
 

@@ -36,13 +36,20 @@ class TaskController extends Controller
      */
     public function create()
     {
+
+        $usersWithPermission = User::whereHas('roles.permissions', function ($query) {
+            $query->where('name', 'coordinator-dashboard');
+        })->get();
+
+
         $user = auth()->user();
         $notAllowed = $user->can('task-create');
+
         if (!$notAllowed) {
             return back()->with('error', 'You do not have permission to create tasks.');
         }
         return inertia('tasks/create', [
-            'users' => User::get(),
+            'users' => $usersWithPermission,
         ]);
     }
 

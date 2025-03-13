@@ -1,5 +1,5 @@
 import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { ROLE_PERMISSIONS, TASK_PERMISSIONS, USER_PERMISSIONS } from '@/constants/permissions';
+import { DASHBOARD_PERMISSIONS, ROLE_PERMISSIONS, TASK_PERMISSIONS, USER_PERMISSIONS } from '@/constants/permissions';
 import { type NavItem } from '@/types';
 import { hasPermissions } from '@/utils/permissionUtils';
 import { Link, usePage } from '@inertiajs/react';
@@ -15,6 +15,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
         Users: USER_PERMISSIONS,
         'Roles and Permissions': ROLE_PERMISSIONS,
         Tasks: TASK_PERMISSIONS,
+        'Task Assign': DASHBOARD_PERMISSIONS,
     };
     return (
         <SidebarGroup className="px-2 py-0">
@@ -25,7 +26,6 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                     .filter(
                         (item) =>
                             item.title === 'Dashboard' ||
-                            item.title === 'Task Assign' || // Always show Dashboard
                             (permissionMap[item.title] && hasPermissions(page.props.permissions, permissionMap[item.title])),
                     )
                     .map((item) => (
