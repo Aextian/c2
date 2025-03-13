@@ -160,6 +160,10 @@ class TaskController extends Controller
      */
     public function edit(string $id)
     {
+        $usersWithPermission = User::whereHas('roles.permissions', function ($query) {
+            $query->where('name', 'coordinator-dashboard');
+        })->get();
+
         $user = auth()->user();
         $notAllowed = $user->can('task-edit');
         if (!$notAllowed) {
@@ -167,7 +171,7 @@ class TaskController extends Controller
         }
         return inertia('tasks/edit', [
             'task' => Task::with('subTasks.task', 'subTasks.cordinatorSubTasks')->find($id),
-            'users' => User::get(),
+            'users' => $usersWithPermission,
 
         ]);
     }
