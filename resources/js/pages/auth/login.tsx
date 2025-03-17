@@ -39,7 +39,10 @@ export default function Login({ status, canResetPassword }: LoginProps) {
         <AuthLayout title="Log in to your account" description="Enter your email and password below to log in">
             <Head title="Log in" />
 
-            <form className="flex flex-col gap-6" onSubmit={submit}>
+            <form className="flex w-full flex-col gap-6" onSubmit={submit}>
+                <div className="flex items-center justify-center">
+                    <h1 className="text-xl font-bold text-blue-600 md:text-4xl">Login</h1>
+                </div>
                 <div className="grid gap-6">
                     <div className="grid gap-2">
                         <Label htmlFor="email">Email address</Label>
