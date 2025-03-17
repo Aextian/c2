@@ -1,5 +1,5 @@
 import { DASHBOARD_PERMISSIONS } from '@/constants/permissions';
-import { IComment, ICordinatorTask } from '@/types/tasks-types';
+import { IComment, ICordinatorSubTask, ICordinatorTask } from '@/types/tasks-types';
 import { hasPermissions } from '@/utils/permissionUtils';
 import { usePage } from '@inertiajs/react';
 import axios from 'axios';
@@ -100,6 +100,9 @@ const SubTask = ({ cordinator_task, fetchCordinatorTasks }: ISubtask) => {
 
     const commentsCounts: number = cordinator_task?.sub_task?.comments?.reduce((total, comment) => total + 1 + (comment.replies?.length || 0), 0); // Ensure it returns 0 if comments are undefined
 
+    const coordinatorDoneInSubTask: ICordinatorSubTask[] =
+        cordinator_task?.sub_task?.cordinator_sub_tasks?.filter((task) => task.status === 'done') ?? [];
+
     return (
         <div className="shadow-sidebar-border p-5 shadow-lg">
             <span className="text-xs">
@@ -145,9 +148,9 @@ const SubTask = ({ cordinator_task, fetchCordinatorTasks }: ISubtask) => {
                     </div>
                     <div>
                         {isCoordinator ? (
-                            <Badge className="text-[10px]" variant={cordinator_task.done_tasks_count > 0 ? 'default' : 'outline'}>
-                                {cordinator_task.done_tasks_count} coordinator{cordinator_task.done_tasks_count !== 1 ? 's have' : ' has'} completed
-                                this task.
+                            <Badge className="text-[10px]" variant={coordinatorDoneInSubTask.length > 0 ? 'default' : 'outline'}>
+                                {coordinatorDoneInSubTask.length} coordinator
+                                {coordinatorDoneInSubTask.length !== 1 ? 's have' : ' has'} completed this task.
                             </Badge>
                         ) : (
                             <ShowCoordinatorDone cordinator_task={cordinator_task} />
