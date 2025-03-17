@@ -14,6 +14,12 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
+        title: 'Tasks',
+        url: route('tasks.index'),
+        activeUrl: ['/tasks', '/tasks/create', '/tasks/edit'],
+        icon: BookmarkCheck,
+    },
+    {
         title: 'Users',
         url: route('users.index'),
         activeUrl: ['/users', '/users/create'],
@@ -25,14 +31,9 @@ const mainNavItems: NavItem[] = [
         activeUrl: ['/permissions', '/permissions/create'],
         icon: ShieldAlert,
     },
+
     {
-        title: 'Tasks',
-        url: route('tasks.index'),
-        activeUrl: ['/tasks', '/tasks/create', '/tasks/edit'],
-        icon: BookmarkCheck,
-    },
-    {
-        title: 'Task Assign',
+        title: 'Assign Task',
         url: route('users-tasks.index'),
         activeUrl: ['/users-tasks'],
         icon: LucideThermometerSnowflake,

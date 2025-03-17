@@ -8,6 +8,8 @@ import React, { FormEvent, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import CommentList from './CommentList';
 import { InputFile } from './InputFile';
+import ShowCoordinatorDone from './ShowCoordinator';
+import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from './ui/select';
@@ -96,6 +98,8 @@ const SubTask = ({ cordinator_task, fetchCordinatorTasks }: ISubtask) => {
 
     const isCoordinator = hasPermissions(permissions, DASHBOARD_PERMISSIONS);
 
+    const commentsCounts: number = cordinator_task?.sub_task?.comments?.reduce((total, comment) => total + 1 + (comment.replies?.length || 0), 0); // Ensure it returns 0 if comments are undefined
+
     return (
         <div className="shadow-sidebar-border p-5 shadow-lg">
             <span className="text-xs">
@@ -135,13 +139,22 @@ const SubTask = ({ cordinator_task, fetchCordinatorTasks }: ISubtask) => {
             <div className="">
                 <div className="flex justify-between">
                     <div className="my-5 flex items-center gap-2 font-bold hover:cursor-pointer" onClick={() => setShowComments(!showComments)}>
-                        <p>Comments</p>
+                        {/* <p>Comments</p> {cordinator_task?.sub_task?.comments?.length} */}
+                        <p>Comments</p> {commentsCounts}
                         <span>{showComments ? <ChevronDown /> : <ChevronUp />}</span>
                     </div>
-                    <p className="text-[10px]">
-                        {cordinator_task.done_tasks_count} coordinator{cordinator_task.done_tasks_count !== 1 ? 's' : ''} have completed this task.
-                    </p>
+                    <div>
+                        {isCoordinator ? (
+                            <Badge className="text-[10px]" variant={cordinator_task.done_tasks_count > 0 ? 'default' : 'outline'}>
+                                {cordinator_task.done_tasks_count} coordinator{cordinator_task.done_tasks_count !== 1 ? 's have' : ' has'} completed
+                                this task.
+                            </Badge>
+                        ) : (
+                            <ShowCoordinatorDone cordinator_task={cordinator_task} />
+                        )}
+                    </div>
                 </div>
+
                 {showComments && (
                     <ul className="my-5 flex flex-col gap-2 text-xs">
                         <li>

@@ -28,7 +28,7 @@ type TTaskForm = {
     content: string;
     options: TOption[];
     deadLine: string;
-    type: 'minor' | 'important' | 'urgent';
+    type: 'minor' | 'important' | 'urgent' | string;
 };
 
 const Create = ({ users, task }: IProps) => {
@@ -57,6 +57,7 @@ const Create = ({ users, task }: IProps) => {
                 userIds: subTask.cordinator_sub_tasks?.map((user) => user.user_id).filter((id) => id !== undefined) ?? [],
             })) ?? [],
     });
+    console.log(data);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -145,8 +146,8 @@ const Create = ({ users, task }: IProps) => {
                         <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                             <div className="flex flex-col gap-5 border-r p-5">
                                 <div className="flex max-h-fit flex-1 flex-col gap-5 self-end">
-                                    <Label>Dead line</Label>
-                                    <Input onChange={handleChange} value={data.deadLine} type="date" name="deadLine" />
+                                    <Label>Due Date</Label>
+                                    <Input onChange={handleChange} value={data.deadLine} type="datetime-local" name="deadLine" />
                                     <InputError message={errors.deadLine} />
                                 </div>
                                 <Label>Title</Label>

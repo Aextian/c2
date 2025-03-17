@@ -1,6 +1,7 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { ITask } from '@/types/tasks-types';
+import { formatDateTime } from '@/utils/dateUtils';
 import { Link, usePage } from '@inertiajs/react';
 import DeleteDialog from '../DeleteDialog';
 import NoDataAvailable from '../NoDataAvailable';
@@ -20,7 +21,7 @@ export function TaskTable() {
                     <TableHead>Type</TableHead>
                     <TableHead>Progress</TableHead>
                     <TableHead>Due Date</TableHead>
-                    <TableHead>Cordinator</TableHead>
+                    <TableHead>Coordinator</TableHead>
                     <TableHead>Actions</TableHead>
                 </TableRow>
             </TableHeader>
@@ -51,7 +52,12 @@ export function TaskTable() {
                             </TooltipProvider>
                         </TableCell>
                         <TableCell>
-                            <Badge variant="outline"> {new Date(task.dead_line || '').toDateString()}</Badge>
+                            <Badge variant="outline">
+                                {/* {new Date(task.dead_line || '').toDateString()} */}
+                                {/* {new Date(task.dead_line || '').toLocaleString()} */}
+                                {formatDateTime(task.dead_line)}
+                                {/* {task.dead_line} */}
+                            </Badge>
                         </TableCell>
                         <TableCell className="text-right">
                             <ul>

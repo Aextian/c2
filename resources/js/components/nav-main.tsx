@@ -15,7 +15,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
         Users: USER_PERMISSIONS,
         'Roles and Permissions': ROLE_PERMISSIONS,
         Tasks: TASK_PERMISSIONS,
-        'Task Assign': DASHBOARD_PERMISSIONS,
+        'Assign Task': DASHBOARD_PERMISSIONS,
     };
     return (
         <SidebarGroup className="px-2 py-0">

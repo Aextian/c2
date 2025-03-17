@@ -1,14 +1,17 @@
 import SubTask from '@/components/SubTask';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { ICordinatorTask } from '@/types/tasks-types';
+import { formatDateTime } from '@/utils/dateUtils';
 import { Head } from '@inertiajs/react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 const Show = ({ id }: { id: number }) => {
     const [cordinatorTasks, setCordinatorTasks] = useState<ICordinatorTask[]>([]);
+    const [filterCoordinators, setfilterCoordinators] = useState<ICordinatorTask[]>([]);
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -25,12 +28,21 @@ const Show = ({ id }: { id: number }) => {
         const response = await axios.get(route('users-tasks.cordinator-tasks', { id: id }));
         const cordinatorTasks = response.data;
         setCordinatorTasks(cordinatorTasks);
+        setfilterCoordinators(cordinatorTasks);
     };
 
     useEffect(() => {
         fetchCordinatorTasks();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
+    const handleFilter = (value: string) => {
+        if (value === 'all') {
+            setfilterCoordinators(cordinatorTasks); // Show all when "all" is selected
+        } else {
+            const filterCoordinators = cordinatorTasks.filter((cordinatorTask) => cordinatorTask.status === value);
+            setfilterCoordinators(filterCoordinators);
+        }
+    };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -41,7 +53,7 @@ const Show = ({ id }: { id: number }) => {
                         <div className="flex justify-end">
                             <h1 className="text-xs md:text-xs">
                                 <span className="font-bold">Due: </span>
-                                {new Date(due || '').toDateString()}
+                                {formatDateTime(due)}
                             </h1>
                         </div>
                         <h1>
@@ -61,8 +73,21 @@ const Show = ({ id }: { id: number }) => {
                             </li>
                         </ul>
                     </div>
+                    <div>
+                        <Select onValueChange={(e) => handleFilter(e)} defaultValue="all">
+                            <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder="Filter" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All</SelectItem>
+                                <SelectItem value="todo">Todo</SelectItem>
+                                <SelectItem value="doing">Doing</SelectItem>
+                                <SelectItem value="done">Done</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
                     <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-                        {cordinatorTasks.map((cordinator_task) => (
+                        {filterCoordinators.map((cordinator_task) => (
                             <SubTask key={cordinator_task.id} fetchCordinatorTasks={fetchCordinatorTasks} cordinator_task={cordinator_task} />
                         ))}
                     </div>

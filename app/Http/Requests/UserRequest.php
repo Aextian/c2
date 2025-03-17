@@ -27,9 +27,26 @@ class UserRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255', 'unique:users,name,' . $userId],
             'email' => ['required', 'email', 'unique:users,email,' . $userId],
-            'password' => [$this->route('user') ? 'nullable' : 'required', 'string', 'confirmed'],
+            // 'password' => [$this->route('user') ? 'nullable' : 'required', 'string', 'confirmed'],
+            'password' => [
+                $this->route('user') ? 'nullable' : 'required',
+                'string',
+                'confirmed',
+                // 'regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!$#%]).*$/',
+                // alpha numeric
+                'regex:/^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$/',
+                'max:20', // Set a maximum length (change 20 to your desired limit)
+                'min:8', // Set a minimum length (change 8 to your desired limit)
+            ],
             'roles' => 'required',
 
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'password.regex' => 'The password must only contain letters and numbers.',
         ];
     }
 }

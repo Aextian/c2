@@ -26,7 +26,9 @@ class TaskRequest extends FormRequest
             'content' => ['required'],
             'type' => ['required'],
             'options' => ['array'],
-            'deadLine' => ['required', 'date', 'after:now'],
+            // 'deadLine' => ['required', 'date', 'after:now'],
+            'deadLine' => ['required', 'date', 'after:+1 hour'],
+
         ];
     }
 
@@ -37,7 +39,8 @@ class TaskRequest extends FormRequest
             'content.required' => 'The content field is required.',
             'type.required' => 'The type field is required.',
             'deadLine.required' => 'The deadLine field is required.',
-            'deadLine.after' => 'The due date must be a date after today.',
+            'deadLine.after' => 'The deadline must be a future date and time.',
+
         ];
     }
 }

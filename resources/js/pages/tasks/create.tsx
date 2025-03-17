@@ -140,7 +140,7 @@ const Create = ({ users }: IProps) => {
                             <div className="flex flex-col gap-5 border-r p-5">
                                 <div className="flex max-h-fit flex-1 flex-col gap-5 self-end">
                                     <Label>Due Date</Label>
-                                    <Input onChange={handleChange} value={data.deadLine} type="date" name="deadLine" />
+                                    <Input onChange={handleChange} value={data.deadLine} type="datetime-local" name="deadLine" />
                                     <InputError message={errors.deadLine} />
                                 </div>
                                 <Label>Title</Label>
@@ -192,6 +192,7 @@ const Create = ({ users }: IProps) => {
                                             isLoading={false}
                                             isClearable={true}
                                             isSearchable={true}
+                                            value={usersOptions.filter((user) => option?.userIds.includes(user.value))}
                                             isMulti
                                             required
                                             onChange={(data) =>

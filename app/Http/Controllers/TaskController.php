@@ -132,8 +132,8 @@ class TaskController extends Controller
                 return redirect()->route('tasks.index')->with('success', 'Task created successfully');
             });
         } catch (\Throwable $th) {
-            throw $th;
-            // return redirect()->route('tasks.index')->with('error', 'Something went wrong');
+            // throw $th;
+            return redirect()->route('tasks.index')->with('error', 'Something went wrong');
         }
     }
 

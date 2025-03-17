@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('title');
             $table->string('content');
-            $table->date('dead_line')->nullable();
+            $table->dateTime('dead_line')->nullable();
             $table->enum('type', ['minor', 'important', 'urgent'])->default('minor');
             $table->enum('status', ['todo', 'doing', 'done',])->default('todo');
             $table->decimal('percentage', 5, 2)->nullable();

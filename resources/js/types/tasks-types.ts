@@ -19,7 +19,7 @@ export interface ISubTask {
     content: string;
     percentage?: number;
     task?: ITask;
-    comments?: IComment;
+    comments?: IComment[];
     cordinator_task?: ICordinatorTask;
     cordinator_sub_tasks?: ICordinatorSubTask[];
 }
@@ -40,6 +40,7 @@ export interface ICordinatorSubTask {
     user_id?: number;
     percentage?: number;
     status: 'todo' | 'doing' | 'done';
+    user?: IUser;
 }
 
 export interface IComment {

@@ -123,7 +123,7 @@ class UsersTaskController extends Controller
         } else {
             $cordinator_tasks = CordinatorSubTask::query()
                 ->whereIn('sub_task_id', $subTaskIds)
-                ->with('subTask.task', 'subTask.comments.user', 'subTask.comments.replies.user')
+                ->with('subTask.task', 'subTask.comments.user', 'subTask.comments.replies.user', 'subTask.cordinatorSubTasks.user')
                 ->get()
                 ->unique('sub_task_id'); // Remove duplicate sub_task_id
         }
