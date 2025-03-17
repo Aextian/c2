@@ -181,6 +181,7 @@ class TaskController extends Controller
      */
     public function update(TaskRequest $request, string $id)
     {
+
         try {
 
             DB::transaction(function () use ($request, $id) {

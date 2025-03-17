@@ -21,13 +21,13 @@ class TaskRequest extends FormRequest
      */
     public function rules(): array
     {
+
         return [
             'title' => ['required', 'string', 'max:255'],
             'content' => ['required'],
             'type' => ['required'],
             'options' => ['array'],
-            // 'deadLine' => ['required', 'date', 'after:now'],
-            'deadLine' => ['required', 'date', 'after:+1 hour'],
+            'deadLine' => ['required', 'date', 'after:' . now()->addHour()],
 
         ];
     }
@@ -39,7 +39,7 @@ class TaskRequest extends FormRequest
             'content.required' => 'The content field is required.',
             'type.required' => 'The type field is required.',
             'deadLine.required' => 'The deadLine field is required.',
-            'deadLine.after' => 'The deadline must be a future date and time.',
+            'deadLine.after' => 'The deadline must be at least 1 hour after the current time.',
 
         ];
     }
