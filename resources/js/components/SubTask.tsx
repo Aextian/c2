@@ -9,7 +9,6 @@ import { toast } from 'react-toastify';
 import CommentList from './CommentList';
 import { InputFile } from './InputFile';
 import ShowCoordinatorDone from './ShowCoordinator';
-import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from './ui/select';
@@ -147,14 +146,14 @@ const SubTask = ({ cordinator_task, fetchCordinatorTasks }: ISubtask) => {
                         <span>{showComments ? <ChevronDown /> : <ChevronUp />}</span>
                     </div>
                     <div>
-                        {isCoordinator ? (
+                        {/* {isCoordinator ? (
                             <Badge className="text-[10px]" variant={coordinatorDoneInSubTask.length > 0 ? 'default' : 'outline'}>
                                 {coordinatorDoneInSubTask.length} coordinator
                                 {coordinatorDoneInSubTask.length !== 1 ? 's have' : ' has'} completed this task.
                             </Badge>
-                        ) : (
-                            <ShowCoordinatorDone cordinator_task={cordinator_task} />
-                        )}
+                        ) : ( */}
+                        <ShowCoordinatorDone cordinator_task={cordinator_task} />
+                        {/* )} */}
                     </div>
                 </div>
 
