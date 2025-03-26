@@ -78,6 +78,6 @@ class CommentController extends Controller
             'file_path' => $filePath
         ]);
 
-        return back()->with('success', 'Reply added successfully');
+        // return back()->with('success', 'Reply added successfully');
     }
 }
