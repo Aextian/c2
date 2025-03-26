@@ -15,14 +15,16 @@ const index = () => {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="users" />
-            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 md:w-8/12">
-                <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 rounded-xl border p-10 md:min-h-min">
-                    <div className="flex justify-end">
+            <div className="h-ful flex max-w-screen flex-1 flex-col gap-4 rounded-xl p-4 md:w-8/12">
+                <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 rounded-xl border md:min-h-min">
+                    <div className="m-5 flex justify-end">
                         <Button variant="outline" asChild>
                             <Link href={route('users.create')}>Create User</Link>
                         </Button>
                     </div>
-                    <UsersTable />
+                    <div className="overflow-x-auto md:w-full">
+                        <UsersTable />
+                    </div>
                 </div>
             </div>
         </AppLayout>

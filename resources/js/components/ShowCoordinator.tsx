@@ -25,9 +25,11 @@ const ShowCoordinatorDone = ({ cordinator_task }: TProps) => {
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>
-                <Badge className="text-[10px] hover:cursor-pointer" variant={coordinatorDoneInSubTask.length > 0 ? 'default' : 'outline'}>
-                    {coordinatorDoneInSubTask.length} coordinator
-                    {coordinatorDoneInSubTask.length !== 1 ? 's have' : ' has'} completed this task.
+                <Badge className="hover:cursor-pointer" variant={coordinatorDoneInSubTask.length > 0 ? 'default' : 'outline'}>
+                    <p className="text-[10px] text-wrap">
+                        {coordinatorDoneInSubTask.length} coordinator
+                        {coordinatorDoneInSubTask.length !== 1 ? 's have' : ' has'} completed this task.
+                    </p>
                 </Badge>
             </AlertDialogTrigger>
             <AlertDialogContent className="md:min-w-[600px]">
