@@ -28,7 +28,6 @@ const Index = () => {
                         <div className="overflow-x-auto">
                             <RolesTable />
                         </div>
-                        <Button type="submit">Submit</Button>
                     </div>
                 </div>
             </div>
