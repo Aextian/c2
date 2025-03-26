@@ -4,6 +4,10 @@ import { IComment } from '@/types/tasks-types';
 import { useForm } from '@inertiajs/react';
 import axios from 'axios';
 import { useRef, useState } from 'react';
+import CommentDelete from './CommentDelete';
+import CommentEdit from './CommentEdit';
+import DeleteReplyComment from './DeleteReplyComment';
+import EditReplyComment from './EditReplyComment';
 import { FileReply } from './FileReply';
 import { Badge } from './ui/badge';
 
@@ -80,17 +84,29 @@ const CommentList = ({ comment, sending, fetchCordinatorTasks }: CommentListProp
                         Download File
                     </Badge>
                 )}
-                <button className="mt-2 ml-10 text-blue-500 hover:underline" onClick={() => setShowReply(!showReply)}>
+                <Badge
+                    variant="outline"
+                    onClick={() => setShowReply(!showReply)}
+                    className="mt-2 ml-10 text-[10px] text-blue-500 hover:cursor-pointer"
+                >
                     Reply
-                </button>
+                </Badge>
+
+                <CommentEdit comment={comment} fetchCordinatorTasks={fetchCordinatorTasks} />
+                <CommentDelete comment={comment} fetchCordinatorTasks={fetchCordinatorTasks} />
+
                 {replies?.map((reply) => (
-                    <div className="mx-10 mt-4" key={reply.id}>
+                    <div className="mx-10 mt-5" key={reply.id}>
                         <p>
                             <span className="font-bold tracking-widest">{reply.user?.name}</span>: {reply.content}
                         </p>
+
+                        <EditReplyComment commentReply={reply} fetchCordinatorTasks={fetchCordinatorTasks} />
+
+                        <DeleteReplyComment commentReply={reply} fetchCordinatorTasks={fetchCordinatorTasks} />
                         {reply.file_path && (
                             <Badge
-                                className="mt-2 text-[10px] hover:cursor-pointer"
+                                className="mt-2 ml-5 text-[10px] hover:cursor-pointer"
                                 variant={'outline'}
                                 onClick={() => handleDownload(reply.file_path as string)}
                             >
@@ -100,7 +116,7 @@ const CommentList = ({ comment, sending, fetchCordinatorTasks }: CommentListProp
                     </div>
                 ))}
                 {comment.replies?.length !== undefined && comment.replies.length > 1 && !viewReply && (
-                    <button className="ml-10 text-blue-500 hover:underline" onClick={() => setViewReply(true)}>
+                    <button className="mt-5 ml-10 text-blue-500 hover:underline" onClick={() => setViewReply(true)}>
                         View or more replies
                     </button>
                 )}

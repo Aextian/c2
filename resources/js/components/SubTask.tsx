@@ -58,6 +58,7 @@ const SubTask = ({ cordinator_task, fetchCordinatorTasks }: ISubtask) => {
             // clear input comment
             if (response.status === 200) {
                 setData({ comment: '', file_path: '' });
+                toast.success(response.data.message);
                 setFileName('');
                 if (fileRef.current) {
                     fileRef.current.value = '';

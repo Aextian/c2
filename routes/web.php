@@ -33,7 +33,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [UsersTaskController::class, 'index'])->name('users-tasks.index');
 
         Route::post('/comment', [CommentController::class, 'storeComment'])->name('users-tasks.comment');
+        Route::put('/comment/{id}', [CommentController::class, 'updateComment'])->name('users-tasks-comment.update');
+        Route::delete('/comment/{id}', [CommentController::class, 'deleteComment'])->name('users-tasks-comment.destroy');
         Route::post('/reply-comment/{id}', [CommentController::class, 'storeReply'])->name('reply-comment.store');
+        Route::put('/reply-comment/{id}', [CommentController::class, 'updateReplyComment'])->name('reply-comment.update');
+        Route::delete('/reply-comment/{id}', [CommentController::class, 'deleteReplyComment'])->name('reply-comment.delete');
+
 
         // download file
         Route::get('/download', [FileController::class, 'downloadFile'])->name('download');

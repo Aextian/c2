@@ -48,7 +48,7 @@ const Show = ({ id }: { id: number }) => {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="tasks" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl md:p-4">
-                <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 rounded-xl border p-10 md:min-h-min">
+                <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 rounded-xl border md:min-h-min md:p-10">
                     <div className="mx-auto my-5 flex min-h-64 flex-col gap-5 p-5 shadow-lg md:min-w-96">
                         <div className="flex justify-end">
                             <h1 className="text-xs md:text-xs">

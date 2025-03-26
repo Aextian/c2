@@ -19,6 +19,7 @@ class CommentController extends Controller
     public function storeComment(Request $request)
     {
 
+
         $request->validate([
             'subTaskId' => 'required',
             'comment' => 'required',
@@ -44,11 +45,43 @@ class CommentController extends Controller
             ]);
 
             return response()->json(['message' => 'Comment added successfully'], 200);
+            // return back()->with('success', 'Reply added successfully');
+
             // return redirect()->back()->with('success', 'Comment added successfully');
         } catch (\Throwable $th) {
             throw $th;
         }
     }
+
+    public function updateComment(Request $request, $id)
+    {
+
+        $request->validate([
+            'comment' => 'required',
+        ]);
+
+        try {
+
+            TaskComment::find($id)->update([
+                'comment' => $request->comment,
+            ]);
+
+            // return response()->json(['message' => 'Comment added successfully'], 200);
+            return redirect()->back()->with('success', 'Comment updated successfully');
+        } catch (\Throwable $th) {
+            // throw $th;
+            return response()->json(['message' => 'Something went wrong'], 500);
+        }
+    }
+    public function deleteComment($id)
+    {
+
+        TaskComment::find($id)->delete();
+
+        return redirect()->back()->with('success', 'Comment deleted successfully');
+    }
+
+
 
     public function storeReply(Request $request, $id)
     {
@@ -78,6 +111,35 @@ class CommentController extends Controller
             'file_path' => $filePath
         ]);
 
-        // return back()->with('success', 'Reply added successfully');
+        return back()->with('success', 'Reply added successfully');
+    }
+
+    public function updateReplyComment(Request $request, $id)
+    {
+
+        $request->validate([
+            'comment' => 'required',
+        ]);
+
+        try {
+
+            CommentReply::find($id)->update([
+                'content' => $request->comment,
+            ]);
+
+            // return response()->json(['message' => 'Comment added successfully'], 200);
+            return redirect()->back()->with('success', 'Comment updated successfully');
+        } catch (\Throwable $th) {
+            // throw $th;
+            return response()->json(['message' => 'Something went wrong'], 500);
+        }
+    }
+
+    public function deleteReplyComment($id)
+    {
+
+        CommentReply::find($id)->delete();
+
+        return redirect()->back()->with('success', 'Reply deleted successfully');
     }
 }

@@ -1,6 +1,6 @@
 import { Head, useForm } from '@inertiajs/react';
-import { LoaderCircle } from 'lucide-react';
-import { FormEventHandler } from 'react';
+import { Eye, EyeClosed, LoaderCircle } from 'lucide-react';
+import { FormEventHandler, useState } from 'react';
 
 import InputError from '@/components/input-error';
 import TextLink from '@/components/text-link';
@@ -27,6 +27,8 @@ export default function Login({ status, canResetPassword }: LoginProps) {
         password: '',
         remember: false,
     });
+
+    const [passwordShow, setPasswordShow] = useState(false);
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
@@ -69,16 +71,32 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                 </TextLink>
                             )}
                         </div>
-                        <Input
-                            id="password"
-                            type="password"
-                            required
-                            tabIndex={2}
-                            autoComplete="current-password"
-                            value={data.password}
-                            onChange={(e) => setData('password', e.target.value)}
-                            placeholder="Password"
-                        />
+                        <div className="relative">
+                            <Input
+                                id="password"
+                                type={passwordShow ? 'text' : 'password'}
+                                required
+                                tabIndex={2}
+                                autoComplete="current-password"
+                                value={data.password}
+                                onChange={(e) => setData('password', e.target.value)}
+                                placeholder="Password"
+                            />
+                            {passwordShow ? (
+                                <Eye
+                                    onClick={() => setPasswordShow(!passwordShow)}
+                                    className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer"
+                                    size={20}
+                                />
+                            ) : (
+                                <EyeClosed
+                                    onClick={() => setPasswordShow(!passwordShow)}
+                                    className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer"
+                                    size={20}
+                                />
+                            )}
+                        </div>
+
                         <InputError message={errors.password} />
                     </div>
 
