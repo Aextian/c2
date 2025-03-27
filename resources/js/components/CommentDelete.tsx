@@ -38,7 +38,7 @@ const CommentDelete = ({ comment, fetchCordinatorTasks }: TProps) => {
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
             <AlertDialogTrigger asChild>
-                <Badge variant="outline" onClick={() => setOpen(true)} className="mt-2 ml-10 text-[10px] text-red-500 hover:cursor-pointer">
+                <Badge variant="outline" onClick={() => setOpen(true)} className="mt-2 ml-2 text-[10px] text-red-500 hover:cursor-pointer">
                     Delete
                 </Badge>
             </AlertDialogTrigger>

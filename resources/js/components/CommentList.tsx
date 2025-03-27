@@ -1,7 +1,8 @@
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { SharedData } from '@/types';
 import { IComment } from '@/types/tasks-types';
-import { useForm } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import axios from 'axios';
 import { useRef, useState } from 'react';
 import CommentDelete from './CommentDelete';
@@ -22,6 +23,8 @@ export type TReply = {
 };
 
 const CommentList = ({ comment, sending, fetchCordinatorTasks }: CommentListProps) => {
+    const { auth } = usePage<SharedData>().props;
+    const userId = auth.user.id;
     const [showReply, setShowReply] = useState(false);
     const [viewReply, setViewReply] = useState(false);
     const [fileName, setFileName] = useState('');
@@ -91,19 +94,25 @@ const CommentList = ({ comment, sending, fetchCordinatorTasks }: CommentListProp
                 >
                     Reply
                 </Badge>
-
-                <CommentEdit comment={comment} fetchCordinatorTasks={fetchCordinatorTasks} />
-                <CommentDelete comment={comment} fetchCordinatorTasks={fetchCordinatorTasks} />
+                {comment.user?.id === auth.user.id && (
+                    <>
+                        <CommentEdit comment={comment} fetchCordinatorTasks={fetchCordinatorTasks} />
+                        <CommentDelete comment={comment} fetchCordinatorTasks={fetchCordinatorTasks} />
+                    </>
+                )}
 
                 {replies?.map((reply) => (
                     <div className="mx-10 mt-5" key={reply.id}>
                         <p>
                             <span className="font-bold tracking-widest">{reply.user?.name}</span>: {reply.content}
                         </p>
+                        {reply.user?.id === auth.user.id && (
+                            <>
+                                <EditReplyComment commentReply={reply} fetchCordinatorTasks={fetchCordinatorTasks} />
 
-                        <EditReplyComment commentReply={reply} fetchCordinatorTasks={fetchCordinatorTasks} />
-
-                        <DeleteReplyComment commentReply={reply} fetchCordinatorTasks={fetchCordinatorTasks} />
+                                <DeleteReplyComment commentReply={reply} fetchCordinatorTasks={fetchCordinatorTasks} />
+                            </>
+                        )}
                         {reply.file_path && (
                             <Badge
                                 className="mt-2 ml-5 text-[10px] hover:cursor-pointer"
@@ -128,7 +137,7 @@ const CommentList = ({ comment, sending, fetchCordinatorTasks }: CommentListProp
                             placeholder="Enter your reply..."
                             required
                         />
-                        <div className="mt-5 flex flex-col justify-end gap-2">
+                        <div className="mt-5 flex flex-col items-end justify-end gap-2">
                             <FileReply fileRef={fileRef} setData={setData} setFileName={setFileName} fileName={fileName} />
                             <Button className="self-end px-10" disabled={sending || processing}>
                                 Send
