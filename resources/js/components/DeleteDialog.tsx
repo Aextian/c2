@@ -41,7 +41,7 @@ const DeleteDialog = ({ url, id }: TProps) => {
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>
-                <Button variant="destructive" disabled={processing} size={'sm'}>
+                <Button className="hover:cursor-pointer" variant="destructive" disabled={processing} size={'sm'}>
                     Delete
                 </Button>
             </AlertDialogTrigger>

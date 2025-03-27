@@ -63,8 +63,13 @@ class UsersTaskController extends Controller
             $cordinatorSubTask =  CordinatorSubTask::find($id);
             $cordinatorSubTask->update(['status' => $request->status]);
             $subTask = SubTask::with('cordinatorSubTasks')->find($cordinatorSubTask->sub_task_id);
-            $subTaskPercentage = $subTask->percentage;
-            $totalCordinatorPercentage = $subTask->cordinatorSubTasks()->where('status', 'done')->sum('percentage');
+            $subTaskPercentage = round($subTask->percentage, 2);
+
+            $totalCordinatorPercentage = round(
+                $subTask->cordinatorSubTasks()->where('status', 'done')->sum('percentage'),
+                2
+            );
+
 
             // check this cordinatorSubTasks is doing base on subtask
             $taskDoing = $subTask->cordinatorSubTasks()
@@ -90,12 +95,14 @@ class UsersTaskController extends Controller
 
             $subTask->update(['is_completed' => false]); //reset the subtask status
 
+
             //check if all cordinatorSubTasks is done
             if ($subTaskPercentage == $totalCordinatorPercentage) {
                 $subTask->update(['is_completed' => true]);
 
                 // update task status
-                $taskPercentage = $task->subTasks()->where('is_completed', true)->sum('percentage');
+                $taskPercentage = round($task->subTasks()->where('is_completed', true)->sum('percentage'), 2);
+
 
                 // check if all subtasks is done and update task status
                 if ($taskPercentage == $task->percentage) {

@@ -47,7 +47,7 @@ export function TaskTable() {
                                     <TooltipTrigger asChild>
                                         <Progress value={task.progress} className="w-[60%]" />
                                     </TooltipTrigger>
-                                    <TooltipContent>{task.progress}%</TooltipContent>
+                                    <TooltipContent>{task.progress?.toFixed(2)}%</TooltipContent>
                                 </Tooltip>
                             </TooltipProvider>
                         </TableCell>

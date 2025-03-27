@@ -7,7 +7,8 @@ import { BreadcrumbItem } from '@/types';
 import { IRole } from '@/types/permission';
 import { IUser } from '@/types/users-types';
 import { Head, useForm } from '@inertiajs/react';
-import { ChangeEvent } from 'react';
+import { Eye, EyeClosed } from 'lucide-react';
+import { ChangeEvent, useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -21,7 +22,7 @@ interface IProps {
     user: IUser;
 }
 
-const Create = ({ roles, user }: IProps) => {
+const Edit = ({ roles, user }: IProps) => {
     const { put, setData, data, processing, errors } = useForm({
         name: user.name,
         email: user.email,
@@ -29,6 +30,9 @@ const Create = ({ roles, user }: IProps) => {
         password_confirmation: '',
         roles: user.roles?.map((role) => role.name) || [],
     });
+
+    const [passwordShow, setPasswordShow] = useState(false);
+    const [confirmShowPassword, setconfirmShowPassword] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value, multiple, selectedOptions } = e.target as HTMLSelectElement;
@@ -60,11 +64,47 @@ const Create = ({ roles, user }: IProps) => {
                         <InputError message={errors.email} />
 
                         <Label>Password</Label>
-                        <Input type="password" name="password" onChange={handleChange} value={data.password} />
+                        <div className="relative">
+                            {passwordShow ? (
+                                <Eye
+                                    onClick={() => setPasswordShow(!passwordShow)}
+                                    className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer"
+                                    size={20}
+                                />
+                            ) : (
+                                <EyeClosed
+                                    onClick={() => setPasswordShow(!passwordShow)}
+                                    className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer"
+                                    size={20}
+                                />
+                            )}
+                            <Input type={passwordShow ? 'text' : 'password'} name="password" onChange={handleChange} value={data.password} />
+                        </div>
                         <InputError message={errors.password} />
 
                         <Label>Confirm Password</Label>
-                        <Input type="password" name="password_confirmation" onChange={handleChange} value={data.password_confirmation} />
+                        <div className="relative">
+                            {confirmShowPassword ? (
+                                <Eye
+                                    onClick={() => setconfirmShowPassword(!confirmShowPassword)}
+                                    className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer"
+                                    size={20}
+                                />
+                            ) : (
+                                <EyeClosed
+                                    onClick={() => setconfirmShowPassword(!confirmShowPassword)}
+                                    className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer"
+                                    size={20}
+                                />
+                            )}
+                            <Input
+                                type={confirmShowPassword ? 'text' : 'password'}
+                                name="password_confirmation"
+                                onChange={handleChange}
+                                value={data.password_confirmation}
+                            />
+                        </div>
+
                         <InputError message={errors.password_confirmation} />
 
                         <Label className="flex flex-col gap-2">
@@ -95,4 +135,4 @@ const Create = ({ roles, user }: IProps) => {
     );
 };
 
-export default Create;
+export default Edit;

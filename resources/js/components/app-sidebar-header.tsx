@@ -3,6 +3,7 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 import { type BreadcrumbItem as BreadcrumbItemType } from '@/types';
 import { IUser } from '@/types/users-types';
 import { Link, usePage } from '@inertiajs/react';
+import axios from 'axios';
 import { BellDot } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -21,6 +22,14 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
     const [showNotification, setShowNotification] = useState(false);
     const { auth, notifications } = usePage<TPage>().props;
     const [newNotifications, setNewNotifications] = useState<TNotification[]>(notifications);
+
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            const response = await axios.get('/notifications');
+            setNewNotifications(response.data);
+        };
+        fetchNotifications();
+    }, [notifications]);
 
     useEffect(() => {
         const channel = window.Echo.private(`notification.${auth.user?.id}`);
