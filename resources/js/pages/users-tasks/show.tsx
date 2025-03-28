@@ -2,16 +2,17 @@ import SubTask from '@/components/SubTask';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
-import { BreadcrumbItem } from '@/types';
+import { BreadcrumbItem, SharedData } from '@/types';
 import { ICordinatorTask } from '@/types/tasks-types';
 import { formatDateTime } from '@/utils/dateUtils';
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 const Show = ({ id }: { id: number }) => {
     const [cordinatorTasks, setCordinatorTasks] = useState<ICordinatorTask[]>([]);
     const [filterCoordinators, setfilterCoordinators] = useState<ICordinatorTask[]>([]);
+    const { auth } = usePage<SharedData>().props;
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -23,6 +24,17 @@ const Show = ({ id }: { id: number }) => {
     const title = cordinatorTasks[0]?.sub_task.task?.type;
     const content = cordinatorTasks[0]?.sub_task.task?.content;
     const due = cordinatorTasks[0]?.sub_task.task?.dead_line;
+
+    useEffect(() => {
+        const channel = window.Echo.private(`notification.${auth.user?.id}`);
+        channel.listen('.NotificationReceived', (e: { notification: Notification }) => {
+            fetchCordinatorTasks();
+        });
+        return () => {
+            channel.stopListening('.NotificationReceived');
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const fetchCordinatorTasks = async () => {
         const response = await axios.get(route('users-tasks.cordinator-tasks', { id: id }));

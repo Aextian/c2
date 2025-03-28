@@ -2,13 +2,15 @@ import AssignTask from '@/components/AssignedTask';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import AppLayout from '@/layouts/app-layout';
-import { BreadcrumbItem } from '@/types';
+import { BreadcrumbItem, SharedData } from '@/types';
 import { ICordinatorTask } from '@/types/tasks-types';
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 const Index = () => {
+    const { auth } = usePage<SharedData>().props;
+
     const [isLoading, setLoading] = useState(true);
     const [cordinatorTasks, setCordinatorTasks] = useState<ICordinatorTask[]>([]);
     const [filterCoordinators, setfilterCoordinators] = useState<ICordinatorTask[]>([]);
@@ -28,6 +30,17 @@ const Index = () => {
         setfilterCoordinators(cordinatorTasks);
         setLoading(false);
     };
+
+    useEffect(() => {
+        const channel = window.Echo.private(`notification.${auth.user?.id}`);
+        channel.listen('.NotificationReceived', (e: { notification: Notification }) => {
+            fetchCordinatorTasks();
+        });
+        return () => {
+            channel.stopListening('.NotificationReceived');
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     useEffect(() => {
         fetchCordinatorTasks();
