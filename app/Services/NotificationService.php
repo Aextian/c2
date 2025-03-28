@@ -6,6 +6,7 @@ use App\Events\NotificationReceived;
 use App\Models\CordinatorSubTask;
 use App\Models\Notification;
 use App\Models\SubTask;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class NotificationService
@@ -15,17 +16,23 @@ class NotificationService
     {
         $subTask = SubTask::find($subTaskId);
 
+        $adminId = User::where('email', 'admin@example.com')->first()->id ?? '';
+
         $userIds = $subTask->cordinatorSubTasks()->pluck('user_id')->toArray();
+
+        $userIds = array_filter(array_unique(array_merge([$adminId], $userIds)));
 
         $authId = Auth::id();
         $now = now();
+
+        $adminMessage = 'commented on their assigned task.';
 
         $notifications = collect($userIds)
             ->filter(fn($userId) => $userId !== $authId) // Skip if userId is the same as authId
             ->map(fn($userId) => [
                 'from_user_id' => $authId,
                 'to_user_id' => $userId,
-                'content' => $content,
+                'content' =>  $adminId == $userId ? $adminMessage : $content,
                 'sub_task_id' => $subTaskId,
                 'created_at' => $now,
                 'updated_at' => $now

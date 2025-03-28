@@ -41,6 +41,7 @@ export interface ICordinatorSubTask {
     percentage?: number;
     status: 'todo' | 'doing' | 'done';
     user?: IUser;
+    sub_task?: ISubTask;
 }
 
 export interface IComment {

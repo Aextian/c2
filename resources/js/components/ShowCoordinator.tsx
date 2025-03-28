@@ -22,6 +22,19 @@ const ShowCoordinatorDone = ({ cordinator_task }: TProps) => {
     const coordinatorDoneInSubTask: ICordinatorSubTask[] =
         cordinator_task?.sub_task?.cordinator_sub_tasks?.filter((task) => task.status === 'done') ?? [];
 
+    const subtaskDeadline = cordinator_task?.sub_task?.task?.dead_line;
+
+    // const formatDateTime = (date: string | Date) => {
+    //     return new Date(date).toLocaleString('en-US', {
+    //         year: 'numeric',
+    //         month: 'short',
+    //         day: '2-digit',
+    //         hour: '2-digit',
+    //         minute: '2-digit',
+    //         hour12: true,
+    //     });
+    // };
+
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>
@@ -58,6 +71,13 @@ const ShowCoordinatorDone = ({ cordinator_task }: TProps) => {
                                         <TableCell>
                                             <Badge variant="outline">
                                                 <span className="first-letter:uppercase">{formatDateTime(task.updated_at)}</span>
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Badge variant={new Date(subtaskDeadline) >= new Date(task.updated_at) ? 'default' : 'warning'}>
+                                                <span className="first-letter:uppercase">
+                                                    <span>{new Date(subtaskDeadline) >= new Date(task.updated_at) ? 'On Time' : 'Late'}</span>
+                                                </span>
                                             </Badge>
                                         </TableCell>
                                     </TableRow>
