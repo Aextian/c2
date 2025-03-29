@@ -16,7 +16,7 @@ class NotificationService
     {
         $subTask = SubTask::find($subTaskId);
 
-        $adminId = User::where('email', 'admin@example.com')->first()->id ?? '';
+        $adminId = 2;
 
         $userIds = $subTask->cordinatorSubTasks()->pluck('user_id')->toArray();
 
